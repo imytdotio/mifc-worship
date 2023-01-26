@@ -13,11 +13,11 @@ import { AuthContext } from "../Context/AuthContext";
 
 export const Home = (props) => {
   const navigate = useNavigate();
-  const { isNewUser } = useContext(AuthContext);
+  const { isAuthenticated, isNewUser } = useContext(AuthContext);
   return (
     <div>
       <Auth />
-      {isNewUser ? navigate("./createuser") : <></>}
+      {isAuthenticated ? isNewUser ? navigate("./createuser") : <></> : <></>}
       {/* <CreateUser /> */}
       <Account />
     </div>

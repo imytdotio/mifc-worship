@@ -36,12 +36,13 @@ export const AuthProvider = (props) => {
       .select()
       .eq("uid", uid);
 
-    if (data) {
-      setIsNewUser(false);
-      console.log("old");
-    } else {
+    if (data.length === 0) {
       setIsNewUser(true);
       console.log("new");
+    } else {
+      setIsNewUser(false);
+      console.log(data);
+      console.log("old");
     }
 
     if (error) {
@@ -60,6 +61,7 @@ export const AuthProvider = (props) => {
       setSession(data.session);
       setError(null);
       setIsAuthenticated(true);
+      checkNewUser(data.user.id);
     }
 
     if (error) {
@@ -69,10 +71,6 @@ export const AuthProvider = (props) => {
       setUser(null);
     }
   };
-
-  useEffect(() => {
-    checkNewUser();
-  }, [user]);
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
