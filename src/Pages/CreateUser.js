@@ -1,5 +1,4 @@
 import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button, CheckBlock, Input } from "../Componenets/Components";
 import { supabase } from "../Config/supabase";
 import { AuthContext } from "../Context/AuthContext";
@@ -10,8 +9,7 @@ import { AuthContext } from "../Context/AuthContext";
  **/
 
 export const CreateUser = (props) => {
-  const navigate = useNavigate();
-  const { isAuthenticated, user, checkNewUser } = useContext(AuthContext);
+  const { isAuthenticated, user } = useContext(AuthContext);
   const [nickname, setNickname] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState(null);
   const [lead, setLead] = useState(false);
@@ -58,8 +56,6 @@ export const CreateUser = (props) => {
 
     if (data) {
       console.log(data);
-      checkNewUser(user.id);
-      navigate("/");
     }
 
     if (error) {

@@ -8,7 +8,6 @@ export const AuthProvider = (props) => {
   const [profile, setProfile] = useState(null);
   const [session, setSession] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isNewUser, setIsNewUser] = useState(false);
   const [error, setError] = useState(null);
 
   // useEffect(() => {
@@ -33,24 +32,6 @@ export const AuthProvider = (props) => {
     }
   };
 
-  const checkNewUser = async (uid) => {
-    const { data, error } = await supabase
-      .from("team_members")
-      .select()
-      .eq("uid", uid);
-
-    if (data.length === 0) {
-      setIsNewUser(true);
-      console.log("new user");
-    } else {
-      setIsNewUser(false);
-      console.log("existing user");
-    }
-
-    if (error) {
-      console.log(error);
-    }
-  };
 
   const fetchProfile = async (uid) => {
     const { data, error } = await supabase
@@ -78,7 +59,6 @@ export const AuthProvider = (props) => {
       setSession(data.session);
       setError(null);
       setIsAuthenticated(true);
-      checkNewUser(data.user.id);
       fetchProfile(data.user.id);
       console.log(data);
     }
@@ -109,9 +89,7 @@ export const AuthProvider = (props) => {
       value={{
         user,
         isAuthenticated,
-        isNewUser,
         profile,
-        checkNewUser,
         signUp,
         signInWithPassword,
         signOut,
