@@ -20,17 +20,11 @@ export const Account = (props) => {
 
   return (
     <>
-      {isAuthenticated ? (
-        <>
-          <h1 className="">{profile.nickname}</h1>
-          {array.map((skill) => {
-            return <Pill>{skill[0]}</Pill>;
-          })}
-          <Auth />
-        </>
-      ) : (
-        <Auth />
-      )}
+      <h1 className="">{profile.nickname}</h1>
+      {array.map((skill) => {
+        return <Pill>{skill[0]}</Pill>;
+      })}
+      <Auth />
     </>
   );
 };

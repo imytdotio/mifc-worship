@@ -22,7 +22,7 @@ export const Home = (props) => {
   return (
     <div>
       home
-      {/* {isAuthenticated ? <Account /> : <Auth />} */}
+      {isAuthenticated ? <></> : <Auth />}
     </div>
   );
 };
