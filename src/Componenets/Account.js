@@ -15,9 +15,11 @@ export const Account = (props) => {
   const { user, profile } = useContext(AuthContext);
   const [array, setArray] = useState(null);
   useEffect(() => {
-    checkNewUser();
+    if (user) {
+      checkNewUser();
+    }
     // console.log(profile);
-  }, [profile]);
+  }, [user, profile]);
 
   useEffect(() => {
     if (profile) {
