@@ -38,6 +38,8 @@ export const AuthProvider = (props) => {
     if (error) {
       setError(error);
       console.log(error.message);
+      setIsAuthenticated(false);
+      setUser(null);
     }
   };
 
