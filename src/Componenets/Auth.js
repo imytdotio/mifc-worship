@@ -8,6 +8,8 @@ import { Button, Input, OutlineButton } from "./Components";
  * @function Auth
  **/
 
+
+
 export const Auth = (props) => {
   const { signUp, signInWithPassword, signOut, isAuthenticated } =
     useContext(AuthContext);

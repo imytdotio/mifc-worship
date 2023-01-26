@@ -1,5 +1,5 @@
 import { supabase } from "../Config/supabase";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext();
 
@@ -9,15 +9,6 @@ export const AuthProvider = (props) => {
   const [session, setSession] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState(null);
-
-  // useEffect(() => {
-  //   const getUserInfo = async () => {
-  //     const { data} = await supabase.auth.getUser();
-  //     setUser(data);
-  //     console.log(data);
-  //   };
-  //   getUserInfo();
-  // }, []);
 
   const signUp = async (email, password) => {
     const { data, error } = await supabase.auth.signUp({ email, password });
@@ -31,7 +22,6 @@ export const AuthProvider = (props) => {
       console.log(error.message);
     }
   };
-
 
   const fetchProfile = async (uid) => {
     const { data, error } = await supabase
@@ -48,6 +38,12 @@ export const AuthProvider = (props) => {
     }
   };
 
+  // useEffect(() => {
+  //   console.log(user);
+  //   console.log(session);
+  //   console.log(profile);
+  // }, [user, session, profile]);
+
   const signInWithPassword = async (email, password) => {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -60,7 +56,6 @@ export const AuthProvider = (props) => {
       setError(null);
       setIsAuthenticated(true);
       fetchProfile(data.user.id);
-      console.log(data);
     }
 
     if (error) {
@@ -89,6 +84,7 @@ export const AuthProvider = (props) => {
       value={{
         user,
         isAuthenticated,
+        fetchProfile,
         profile,
         signUp,
         signInWithPassword,

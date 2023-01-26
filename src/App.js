@@ -10,7 +10,7 @@ function App() {
     <div className="App m-auto pt-8 px-8">
       <BrowserRouter>
         <Link to="/" className="md:text-4xl md:font-bold text-2xl font-bold">
-          🌊
+          🌊 Flow Church Worship
         </Link>
         <Nav />
         <Routes>
