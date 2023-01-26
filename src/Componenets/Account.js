@@ -12,14 +12,15 @@ import { Pill } from "./Components";
 
 export const Account = (props) => {
   const navigate = useNavigate();
-  const { user, profile } = useContext(AuthContext);
+  const { session, profile } = useContext(AuthContext);
   const [array, setArray] = useState(null);
   useEffect(() => {
-    if (user) {
+    console.log(session.user.id);
+    if (session) {
       checkNewUser();
     }
     // console.log(profile);
-  }, [user, profile]);
+  }, [session, profile]);
 
   useEffect(() => {
     if (profile) {
@@ -37,7 +38,7 @@ export const Account = (props) => {
     const { data, error } = await supabase
       .from("team_members")
       .select()
-      .eq("uid", user.id);
+      .eq("uid", session.user.id);
 
     if (data && data.length === 0) {
       navigate("/createuser");
