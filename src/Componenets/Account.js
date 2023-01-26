@@ -13,21 +13,23 @@ import { Pill } from "./Components";
 export const Account = (props) => {
   const navigate = useNavigate();
   const { user, profile } = useContext(AuthContext);
+  const [array, setArray] = useState(null);
   useEffect(() => {
     checkNewUser();
-    console.log(profile);
+    // console.log(profile);
   }, [profile]);
 
-  // const [array, setArray] = useState(null);
-  // useEffect(() => {
-  //   setArray(
-  //     Object.keys(profile)
-  //       .map((key) => [key, profile[key]])
-  //       .filter((arr) => {
-  //         return arr[1] === true;
-  //       })
-  //   );
-  // }, []);
+  useEffect(() => {
+    if (profile) {
+      setArray(
+        Object.keys(profile)
+          .map((key) => [key, profile[key]])
+          .filter((arr) => {
+            return arr[1] === true;
+          })
+      );
+    }
+  }, [profile]);
 
   const checkNewUser = async () => {
     const { data, error } = await supabase
@@ -47,13 +49,19 @@ export const Account = (props) => {
   return (
     <>
       <h1>Account</h1>
-      <Link to="/createuser">Create</Link>
-
+      <Link to="/edituser">Edit</Link>
+      <br />
       {/* <h1 className="">{profile && profile.nickname}</h1> */}
-      {/* {array &&
-        array.map((skill) => {
-          return <Pill key={skill[0]}>{skill[0]}</Pill>;
-        })} */}
+      {array && (
+        <>
+          <p className="mt-4">Skills</p>
+          <p>{profile.nickname}</p>
+          {array.map((skill) => {
+            return <Pill key={skill[0]}>{skill[0]}</Pill>;
+          })}
+        </>
+      )}
+
       <Auth />
     </>
   );

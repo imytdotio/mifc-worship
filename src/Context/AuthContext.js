@@ -69,6 +69,8 @@ export const AuthProvider = (props) => {
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
 
+    
+
     if (error) {
       setError(error);
       console.log(error.message);
@@ -76,6 +78,7 @@ export const AuthProvider = (props) => {
       setUser(null);
       setSession(null);
       setIsAuthenticated(false);
+      setProfile(null)
     }
   };
 

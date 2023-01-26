@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
 import { Button, Input, OutlineButton } from "./Components";
 
@@ -8,11 +9,10 @@ import { Button, Input, OutlineButton } from "./Components";
  * @function Auth
  **/
 
-
-
 export const Auth = (props) => {
   const { signUp, signInWithPassword, signOut, isAuthenticated } =
     useContext(AuthContext);
+  const navigate = useNavigate();
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   return (
@@ -24,6 +24,7 @@ export const Auth = (props) => {
             onClick={(e) => {
               e.preventDefault();
               signOut();
+              navigate("/");
             }}
           >
             Sign Out
