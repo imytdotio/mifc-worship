@@ -15,8 +15,8 @@ export const Account = (props) => {
   const { session, profile } = useContext(AuthContext);
   const [array, setArray] = useState(null);
   useEffect(() => {
-    console.log(session.user.id);
     if (session) {
+      console.log(session.user.id);
       checkNewUser();
     }
     // console.log(profile);
