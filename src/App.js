@@ -6,7 +6,7 @@ import { Home } from "./Pages/Home";
 
 function App() {
   return (
-    <div className="App m-auto pt-8">
+    <div className="App m-auto pt-8 px-8">
       <h1 className="md:text-4xl md:font-bold text-2xl font-bold">
         🌊 FlowChurch Worship
       </h1>
