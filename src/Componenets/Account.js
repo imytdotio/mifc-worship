@@ -12,17 +12,21 @@ import { Pill } from "./Components";
 
 export const Account = (props) => {
   const { profile, isAuthenticated } = useContext(AuthContext);
-  useContext(() => {}, [])
-  const array = Object.keys(profile)
-    .map((key) => [key, profile[key]])
-    .filter((arr) => {
-      return arr[1] === true;
-    });
+  const [array, setArray] = useState(null);
+  useContext(() => {
+    setArray(
+      Object.keys(profile)
+        .map((key) => [key, profile[key]])
+        .filter((arr) => {
+          return arr[1] === true;
+        })
+    );
+  }, []);
 
   return (
     <>
       <h1 className="">{profile.nickname}</h1>
-      {array.map((skill) => {
+      {array && array.map((skill) => {
         return <Pill>{skill[0]}</Pill>;
       })}
       <Auth />
