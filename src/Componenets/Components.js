@@ -46,6 +46,16 @@ export const CheckBlock = (props) => {
   );
 };
 
+export const Pill = (props) => {
+  return (
+    <div
+      className={`inline-block cursor-pointer bg-teal-300 rounded-full py-2 px-3 mx-1 mb-2 ${props.className}`}
+    >
+      {props.children}
+    </div>
+  );
+};
+
 export const Button = (props) => {
   return (
     <button

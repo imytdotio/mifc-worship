@@ -5,6 +5,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = (props) => {
   const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [session, setSession] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isNewUser, setIsNewUser] = useState(false);
@@ -47,6 +48,21 @@ export const AuthProvider = (props) => {
     }
   };
 
+  const fetchUser = async (uid) => {
+    const { data, error } = await supabase
+      .from("team_members")
+      .select()
+      .eq("uid", uid);
+
+    if (data) {
+      console.log(data);
+      setProfile(data[0]);
+    }
+    if (error) {
+      console.log(error);
+    }
+  };
+
   const signInWithPassword = async (email, password) => {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -59,6 +75,8 @@ export const AuthProvider = (props) => {
       setError(null);
       setIsAuthenticated(true);
       checkNewUser(data.user.id);
+      fetchUser(data.user.id);
+      setProfile(data.user);
     }
 
     if (error) {
@@ -88,6 +106,7 @@ export const AuthProvider = (props) => {
         user,
         isAuthenticated,
         isNewUser,
+        profile,
         signUp,
         signInWithPassword,
         signOut,
