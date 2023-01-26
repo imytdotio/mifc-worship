@@ -38,11 +38,8 @@ export const AuthProvider = (props) => {
 
     if (data.length === 0) {
       setIsNewUser(true);
-      console.log("new");
     } else {
       setIsNewUser(false);
-      console.log(data);
-      console.log("old");
     }
 
     if (error) {

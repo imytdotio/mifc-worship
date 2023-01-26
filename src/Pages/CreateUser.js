@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button, CheckBlock, Input } from "../Componenets/Components";
 import { supabase } from "../Config/supabase";
 import { AuthContext } from "../Context/AuthContext";
@@ -9,6 +10,7 @@ import { AuthContext } from "../Context/AuthContext";
  **/
 
 export const CreateUser = (props) => {
+  const navigate = useNavigate();
   const { isAuthenticated, user } = useContext(AuthContext);
   const [nickname, setNickname] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState(null);
@@ -56,6 +58,7 @@ export const CreateUser = (props) => {
 
     if (data) {
       console.log(data);
+      navigate("/");
     }
 
     if (error) {
@@ -199,7 +202,7 @@ export const CreateUser = (props) => {
               />
               <CheckBlock
                 label="🥷 特務"
-                element={chef}
+                element={specialAgent}
                 onClick={(e) => {
                   e.preventDefault();
                   setSpecialAgent(!specialAgent);
