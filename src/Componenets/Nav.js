@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
+import { AuthContext } from "../Context/AuthContext";
 
 /**
  * @author
@@ -7,6 +8,7 @@ import { NavLink } from "react-router-dom";
  **/
 
 export const Nav = (props) => {
+  const { isAuthenticated } = useContext(AuthContext);
   const nav = "hover:border-b-2 hover:border-teal-400 duration-100 ease-in-out";
   return (
     <nav className="flex flex-row gap-2 justify-center my-2">
@@ -20,14 +22,18 @@ export const Nav = (props) => {
       >
         Home
       </NavLink>
-      <NavLink
-        to="/account"
-        className={({ isActive }) =>
-          isActive ? `border-b-2 border-teal-400 ${nav}` : `${nav}`
-        }
-      >
-        Account
-      </NavLink>
+      {isAuthenticated ? (
+        <NavLink
+          to="/account"
+          className={({ isActive }) =>
+            isActive ? `border-b-2 border-teal-400 ${nav}` : `${nav}`
+          }
+        >
+          Account
+        </NavLink>
+      ) : (
+        ""
+      )}
     </nav>
   );
 };
