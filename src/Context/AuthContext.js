@@ -23,6 +23,8 @@ export const AuthProvider = (props) => {
     }
   };
 
+// test
+
   const fetchProfile = async (uid) => {
     const { data, error } = await supabase
       .from("team_members")
