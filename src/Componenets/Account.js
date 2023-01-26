@@ -12,6 +12,7 @@ import { Pill } from "./Components";
 
 export const Account = (props) => {
   const { profile, isAuthenticated } = useContext(AuthContext);
+  useContext(() => {}, [])
   const array = Object.keys(profile)
     .map((key) => [key, profile[key]])
     .filter((arr) => {
