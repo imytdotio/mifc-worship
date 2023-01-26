@@ -1,7 +1,6 @@
 import React, { useContext, useEffect } from "react";
-import { Account } from "../Componenets/Account";
 import { Auth } from "../Componenets/Auth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
 
 /**
@@ -17,12 +16,13 @@ export const Home = (props) => {
     if (isAuthenticated && isNewUser) {
       navigate("./createuser");
     }
-  }, []);
+  }, [isNewUser, isAuthenticated, navigate]);
 
   return (
     <div>
       home
-      {isAuthenticated ? <></> : <Auth />}
+      <Auth />
+      <Link to="/createuser">Create</Link>
     </div>
   );
 };

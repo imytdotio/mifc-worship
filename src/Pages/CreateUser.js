@@ -11,7 +11,7 @@ import { AuthContext } from "../Context/AuthContext";
 
 export const CreateUser = (props) => {
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useContext(AuthContext);
+  const { isAuthenticated, user, checkNewUser } = useContext(AuthContext);
   const [nickname, setNickname] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState(null);
   const [lead, setLead] = useState(false);
@@ -58,6 +58,7 @@ export const CreateUser = (props) => {
 
     if (data) {
       console.log(data);
+      checkNewUser(user.id);
       navigate("/");
     }
 

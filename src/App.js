@@ -2,7 +2,6 @@ import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import "./App.css";
 import { Account } from "./Componenets/Account";
 import { Nav } from "./Componenets/Nav";
-import { AuthContext, AuthProvider } from "./Context/AuthContext";
 import { CreateUser } from "./Pages/CreateUser";
 import { Home } from "./Pages/Home";
 

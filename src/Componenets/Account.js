@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { supabase } from "../Config/supabase";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
 import { Auth } from "./Auth";
 import { Pill } from "./Components";
@@ -11,9 +10,13 @@ import { Pill } from "./Components";
  **/
 
 export const Account = (props) => {
+  const navigate = useNavigate();
   const { profile, isAuthenticated } = useContext(AuthContext);
   const [array, setArray] = useState(null);
-  useContext(() => {
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/");
+    }
     setArray(
       Object.keys(profile)
         .map((key) => [key, profile[key]])
@@ -25,10 +28,12 @@ export const Account = (props) => {
 
   return (
     <>
-      <h1 className="">{profile.nickname}</h1>
-      {array && array.map((skill) => {
-        return <Pill>{skill[0]}</Pill>;
-      })}
+      <h1>Account</h1>
+      {/* <h1 className="">{profile && profile.nickname}</h1> */}
+      {array &&
+        array.map((skill) => {
+          return <Pill key={skill[0]}>{skill[0]}</Pill>;
+        })}
       <Auth />
     </>
   );
