@@ -1,5 +1,5 @@
 import { supabase } from "../Config/supabase";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext();
 
@@ -7,10 +7,18 @@ export const AuthProvider = (props) => {
   const [user, setUser] = useState(null);
   const [session, setSession] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isNewUser, setIsNewUser] = useState(false);
   const [error, setError] = useState(null);
 
   const signUp = async (email, password) => {
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp(
+      { email, password },
+      {
+        options: {
+          emailRedirectTo: "https://localhost:3001/createuser",
+        },
+      }
+    );
 
     if (data) {
       console.log(data);
@@ -19,6 +27,25 @@ export const AuthProvider = (props) => {
     if (error) {
       setError(error);
       console.log(error.message);
+    }
+  };
+
+  const checkNewUser = async (uid) => {
+    const { data, error } = await supabase
+      .from("team_members")
+      .select()
+      .eq("uid", uid);
+
+    if (data) {
+      setIsNewUser(false);
+      console.log("old");
+    } else {
+      setIsNewUser(true);
+      console.log("new");
+    }
+
+    if (error) {
+      console.log(error);
     }
   };
 
@@ -43,6 +70,10 @@ export const AuthProvider = (props) => {
     }
   };
 
+  useEffect(() => {
+    checkNewUser();
+  }, [user]);
+
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
 
@@ -61,6 +92,7 @@ export const AuthProvider = (props) => {
       value={{
         user,
         isAuthenticated,
+        isNewUser,
         signUp,
         signInWithPassword,
         signOut,

@@ -35,8 +35,8 @@ export const Checkbox = (props) => {
 export const CheckBlock = (props) => {
   return (
     <button
-      className={`inline-block cursor-pointer hover:bg-teal-300/50 rounded-full py-2 px-3 mx-1 mb-2 ${
-        props.element ? "bg-teal-300 " : ""
+      className={`inline-block cursor-pointer border-2 border-transparent hover:border-2 hover:border-teal-300 rounded-full py-2 px-3 mx-1 mb-2 ${
+        props.element === true ? "bg-teal-300 " : ""
       }`}
       element={props.element}
       onClick={props.onClick}

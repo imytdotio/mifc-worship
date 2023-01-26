@@ -62,6 +62,7 @@ export const CreateUser = (props) => {
       console.log(error);
     }
   };
+
   return (
     <div>
       {isAuthenticated ? (
@@ -87,112 +88,129 @@ export const CreateUser = (props) => {
               <CheckBlock
                 label="🎤 主領"
                 element={lead}
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setLead(!lead);
                 }}
               />
               <CheckBlock
                 label="🎤 和唱"
                 element={vocal}
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setVocal(!vocal);
                 }}
               />
               <CheckBlock
                 label="🎹 琴"
                 element={piano}
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setPiano(!piano);
                 }}
               />
               <CheckBlock
                 label="🥁 鼓"
                 element={drum}
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setDrum(!drum);
                 }}
               />
               <CheckBlock
                 label="🎸 bass"
                 element={bass}
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setBass(!bass);
                 }}
               />
               <CheckBlock
                 label="🎸 電結"
                 element={elecGuitar}
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setElecGuitar(!elecGuitar);
                 }}
               />
               <CheckBlock
                 label="🎸 木結"
                 element={acousticGuitar}
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setAcousticGuitar(!acousticGuitar);
                 }}
               />
               <CheckBlock
                 label="🎻 小提琴"
                 element={violin}
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setViolin(!violin);
                 }}
               />
               <CheckBlock
                 label="📽 propre"
                 element={propre}
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setPropre(!propre);
                 }}
               />
               <CheckBlock
                 label="📡 直播"
                 element={streaming}
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setStreaming(!streaming);
                 }}
               />
               <CheckBlock
                 label="📹 Carman"
                 element={camMan}
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setCamMan(!camMan);
                 }}
               />
               <CheckBlock
                 label="🎛 音響"
                 element={audio}
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setAudio(!audio);
                 }}
               />
               <CheckBlock
                 label="🌈 燈光"
                 element={lighting}
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setLighting(!lighting);
                 }}
               />
               <CheckBlock
                 label="🧑‍🍳 膳長"
                 element={chef}
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setChef(!chef);
                 }}
               />
               <CheckBlock
                 label="🥷 特務"
                 element={chef}
-                onClick={() => setSpecialAgent(!specialAgent)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setSpecialAgent(!specialAgent);
+                }}
               />
             </div>
             <Button onClick={submitHandler}>Submit</Button>
           </form>
         </div>
       ) : (
-        ""
+        "Not Authenticated"
       )}
     </div>
   );
