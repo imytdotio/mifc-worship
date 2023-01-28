@@ -56,7 +56,7 @@ export const AuthProvider = (props) => {
     if (error) {
       setError(error);
       setSession(null);
-      console.log(error.message);
+      console.log("error" + error.message);
       setIsAuthenticated(false);
       setUser(null);
       return;
