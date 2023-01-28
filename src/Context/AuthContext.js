@@ -49,7 +49,7 @@ export const AuthProvider = (props) => {
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
 
-    if (!error) {
+    if (error) {
       console.log(error);
       setError(error);
       return;
