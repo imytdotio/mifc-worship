@@ -52,10 +52,10 @@ export const Account = (props) => {
   return (
     <>
       <h1>Account</h1>
-      <Link to="/edituser">Edit</Link>
+      {/* <Link to="/edituser">Edit</Link> */}
       <br />
       {/* <h1 className="">{profile && profile.nickname}</h1> */}
-      {array && (
+      {/* {array && (
         <>
           <p className="mt-4">Skills</p>
           <p>{profile.nickname}</p>
@@ -63,7 +63,7 @@ export const Account = (props) => {
             return <Pill key={skill[0]}>{skill[0]}</Pill>;
           })}
         </>
-      )}
+      )} */}
 
       <Auth />
     </>

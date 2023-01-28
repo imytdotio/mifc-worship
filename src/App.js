@@ -18,9 +18,11 @@ function App() {
         <Routes>
           <Route path="/" exact element={<Home />} />
           <Route path="/login" element={<Login />} />
+          
+          {/* Logged In */}
+          <Route path="/account" element={<Account />} />
           <Route path="/createuser" element={<CreateUser />} />
           <Route path="/edituser" element={<EditUser />} />
-          <Route path="/account" element={<Account />} />
         </Routes>
       </BrowserRouter>
     </div>
