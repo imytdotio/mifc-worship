@@ -1,5 +1,6 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { SignedIn } from "../Componenets/Auth";
+import { supabase } from "../Config/supabase";
 import { AuthContext } from "../Context/AuthContext";
 import { Login } from "./Login";
 
@@ -9,6 +10,17 @@ import { Login } from "./Login";
  **/
 
 export const Home = (props) => {
-  const { session } = useContext(AuthContext);
-  return <div>{session ? <SignedIn /> : <Login />}</div>;
+  const [user, setUser] = useState(null);
+  const getUser = async () => {
+    const { data } = await supabase.auth.getUser();
+
+    setUser(data.user);
+    console.log(data);
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  return <div>{user ? <SignedIn /> : <Login />}</div>;
 };

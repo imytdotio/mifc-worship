@@ -15,7 +15,6 @@ export const NotSignedIn = (props) => {
 
   return (
     <div>
-      <h1>Not Signed In</h1>
       <div className="flex flex-col w-1/3 justify-center m-auto gap-2">
         <Input
           value={email}
@@ -59,12 +58,24 @@ export const NotSignedIn = (props) => {
 };
 
 export const SignedIn = () => {
-  const { user, signOut } = useContext(AuthContext);
+  const { signOut } = useContext(AuthContext);
+  const [user, setUser] = useState(null);
+  const getUser = async () => {
+    const { data } = await supabase.auth.getUser();
+
+    setUser(data.user);
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   return (
-    <div>
-      <p>{user.id}</p>
-      <Button onClick={() => signOut()}>Sign out</Button>
+    <div className="m-auto">
+      <p>{user && user.id}</p>
+      <Button onClick={() => signOut()} className="w-1/6">
+        Sign out
+      </Button>
     </div>
   );
 };
