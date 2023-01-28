@@ -23,7 +23,7 @@ export const AuthProvider = (props) => {
     }
   };
 
-// test
+  // test
 
   const fetchProfile = async (uid) => {
     const { data, error } = await supabase
@@ -31,12 +31,13 @@ export const AuthProvider = (props) => {
       .select()
       .eq("uid", uid);
 
+    if (error) {
+      console.log(error);
+    }
+
     if (data) {
       console.log(data);
       setProfile(data[0]);
-    }
-    if (error) {
-      console.log(error);
     }
   };
 
@@ -52,27 +53,27 @@ export const AuthProvider = (props) => {
       password,
     });
 
+    if (error) {
+      setError(error);
+      setSession(null);
+      console.log(error.message);
+      setIsAuthenticated(false);
+      setUser(null);
+      return;
+    }
+
     if (data) {
       setUser(data.user);
       setSession(data.session);
       setError(null);
       setIsAuthenticated(true);
-      console.log(data.user.id)
+      console.log(data.user.id);
       fetchProfile(data.user.id);
-    }
-
-    if (error) {
-      setError(error);
-      console.log(error.message);
-      setIsAuthenticated(false);
-      setUser(null);
     }
   };
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
-
-    
 
     if (error) {
       setError(error);
@@ -81,7 +82,7 @@ export const AuthProvider = (props) => {
       setUser(null);
       setSession(null);
       setIsAuthenticated(false);
-      setProfile(null)
+      setProfile(null);
     }
   };
 

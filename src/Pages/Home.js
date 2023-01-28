@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from "react";
-import { Auth } from "../Componenets/Auth";
+import { AuthContext } from "../Context/AuthContext";
+import { Login } from "./Login";
 
 /**
  * @author
@@ -7,10 +8,6 @@ import { Auth } from "../Componenets/Auth";
  **/
 
 export const Home = (props) => {
-  return (
-    <div>
-      home
-      <Auth />
-    </div>
-  );
+  const { session } = useContext(AuthContext);
+  return <div>{session ? "hi" : <Login />}</div>;
 };

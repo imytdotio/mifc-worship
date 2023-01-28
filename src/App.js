@@ -5,6 +5,7 @@ import { Nav } from "./Componenets/Nav";
 import { CreateUser } from "./Pages/CreateUser";
 import { EditUser } from "./Pages/EditUser";
 import { Home } from "./Pages/Home";
+import { Login } from "./Pages/Login";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Nav />
         <Routes>
           <Route path="/" exact element={<Home />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/createuser" element={<CreateUser />} />
           <Route path="/edituser" element={<EditUser />} />
           <Route path="/account" element={<Account />} />
