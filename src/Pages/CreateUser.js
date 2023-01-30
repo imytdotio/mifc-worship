@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, CheckBlock, Input } from "../Componenets/Components";
 import { supabase } from "../Config/supabase";
@@ -11,7 +11,7 @@ import { AuthContext } from "../Context/AuthContext";
 
 export const CreateUser = (props) => {
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const { user, fetchProfile, profile } = useContext(AuthContext);
   const [nickname, setNickname] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState(null);
   const [lead, setLead] = useState(false);
@@ -29,6 +29,13 @@ export const CreateUser = (props) => {
   const [lighting, setLighting] = useState(false);
   const [chef, setChef] = useState(false);
   const [specialAgent, setSpecialAgent] = useState(false);
+
+  useEffect(() => {
+    fetchProfile(user.id);
+    if (profile) {
+      navigate("/");
+    }
+  }, []);
 
   const submitHandler = async (e) => {
     e.preventDefault();

@@ -30,22 +30,6 @@ export const Account = (props) => {
     }
   }, []);
 
-  // const checkNewUser = async () => {
-  //   const { data, error } = await supabase
-  //     .from("team_members")
-  //     .select()
-  //     .eq("uid", data.user.id);
-  //   // This line is buggy
-
-  //   if (data && data.length === 0) {
-  //     navigate("/createuser");
-  //   }
-
-  //   if (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   return (
     <>
       <h1>Account</h1>
