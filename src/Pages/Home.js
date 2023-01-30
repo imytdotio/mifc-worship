@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { SignedIn } from "../Componenets/Auth";
+import { SignedIn, SignIn, SignOut } from "../Componenets/Auth";
 import { supabase } from "../Config/supabase";
 import { AuthContext } from "../Context/AuthContext";
 import { Login } from "./Login";
@@ -22,5 +22,11 @@ export const Home = (props) => {
     getUser();
   }, []);
 
-  return <div>{user ? <SignedIn /> : <Login />}</div>;
+  return (
+    <div>
+      <h1>Home</h1>
+      {user && user ? "got User" : "no user"}
+      <Login />
+    </div>
+  );
 };

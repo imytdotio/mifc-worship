@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../Config/supabase";
 import { AuthContext } from "../Context/AuthContext";
-import { Auth } from "./Auth";
 import { Pill } from "./Components";
 
 /**
@@ -12,18 +11,19 @@ import { Pill } from "./Components";
 
 export const Account = (props) => {
   const navigate = useNavigate();
-  const { session, profile } = useContext(AuthContext);
+  const { profile } = useContext(AuthContext);
   const [array, setArray] = useState(null);
-  useEffect(() => {
-    if (session) {
-      console.log(session.user.id);
-      checkNewUser();
-    }
-    // console.log(profile);
-  }, [session, profile]);
+  // useEffect(() => {
+  //   if (session) {
+  //     console.log(session.user.id);
+  //     checkNewUser();
+  //   }
+  //   // console.log(profile);
+  // }, [session, profile]);
 
   useEffect(() => {
     if (profile) {
+      console.log(profile[0]);
       setArray(
         Object.keys(profile)
           .map((key) => [key, profile[key]])
@@ -38,7 +38,8 @@ export const Account = (props) => {
     const { data, error } = await supabase
       .from("team_members")
       .select()
-      .eq("uid", session.user.id);
+      .eq("uid", data.user.id);
+    // This line is buggy
 
     if (data && data.length === 0) {
       navigate("/createuser");
@@ -52,10 +53,10 @@ export const Account = (props) => {
   return (
     <>
       <h1>Account</h1>
+      {profile && profile ? "profile" : "no profile"}
       {/* <Link to="/edituser">Edit</Link> */}
-      <br />
       {/* <h1 className="">{profile && profile.nickname}</h1> */}
-      {/* {array && (
+      {array && (
         <>
           <p className="mt-4">Skills</p>
           <p>{profile.nickname}</p>
@@ -63,9 +64,9 @@ export const Account = (props) => {
             return <Pill key={skill[0]}>{skill[0]}</Pill>;
           })}
         </>
-      )} */}
+      )}
 
-      <Auth />
+      {/* <Auth /> */}
     </>
   );
 };

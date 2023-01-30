@@ -1,5 +1,7 @@
 import React from "react";
-import { Auth } from "../Componenets/Auth";
+import { SignIn, SignOut } from "../Componenets/Auth";
+import { useContext } from "react";
+import { AuthContext } from "../Context/AuthContext";
 
 /**
  * @author
@@ -7,9 +9,6 @@ import { Auth } from "../Componenets/Auth";
  **/
 
 export const Login = (props) => {
-  return (
-    <div>
-      <Auth />
-    </div>
-  );
+  const { user } = useContext(AuthContext);
+  return <div>{user && user ? <SignOut /> : <SignIn />}</div>;
 };

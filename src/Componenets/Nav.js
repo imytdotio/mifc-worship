@@ -8,7 +8,7 @@ import { AuthContext } from "../Context/AuthContext";
  **/
 
 export const Nav = (props) => {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const nav = "hover:border-b-2 hover:border-teal-400 duration-100 ease-in-out";
   return (
     <nav className="flex flex-row gap-2 justify-center my-2">
@@ -22,7 +22,7 @@ export const Nav = (props) => {
       >
         Home
       </NavLink>
-      {isAuthenticated ? (
+      {user ? (
         <NavLink
           to="/account"
           className={({ isActive }) =>

@@ -8,7 +8,7 @@ import { Button, Input, OutlineButton } from "./Components";
  * @function Auth
  **/
 
-export const NotSignedIn = (props) => {
+export const SignIn = (props) => {
   const { error, signUp, signInWithPassword } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -57,7 +57,7 @@ export const NotSignedIn = (props) => {
   );
 };
 
-export const SignedIn = () => {
+export const SignOut = () => {
   const { signOut } = useContext(AuthContext);
   const [user, setUser] = useState(null);
   const getUser = async () => {
@@ -80,13 +80,3 @@ export const SignedIn = () => {
   );
 };
 
-export const Auth = (props) => {
-  const { user } = useContext(AuthContext);
-
-  return (
-    <div>
-      <h1>Auth</h1>
-      {user ? <SignedIn /> : <NotSignedIn />}
-    </div>
-  );
-};
