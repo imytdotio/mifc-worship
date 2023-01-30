@@ -22,6 +22,9 @@ export const Account = (props) => {
   // }, [session, profile]);
 
   useEffect(() => {
+    if (!profile) {
+      navigate("/createuser");
+    }
     if (profile) {
       console.log(profile[0]);
       setArray(
