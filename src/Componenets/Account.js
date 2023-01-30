@@ -11,22 +11,15 @@ import { Pill } from "./Components";
 
 export const Account = (props) => {
   const navigate = useNavigate();
-  const { profile } = useContext(AuthContext);
+  const { user, profile, fetchProfile } = useContext(AuthContext);
   const [array, setArray] = useState(null);
-  // useEffect(() => {
-  //   if (session) {
-  //     console.log(session.user.id);
-  //     checkNewUser();
-  //   }
-  //   // console.log(profile);
-  // }, [session, profile]);
 
   useEffect(() => {
+    fetchProfile(user.id);
     if (!profile) {
       navigate("/createuser");
     }
     if (profile) {
-      console.log(profile[0]);
       setArray(
         Object.keys(profile)
           .map((key) => [key, profile[key]])
@@ -35,23 +28,23 @@ export const Account = (props) => {
           })
       );
     }
-  }, [profile]);
+  }, []);
 
-  const checkNewUser = async () => {
-    const { data, error } = await supabase
-      .from("team_members")
-      .select()
-      .eq("uid", data.user.id);
-    // This line is buggy
+  // const checkNewUser = async () => {
+  //   const { data, error } = await supabase
+  //     .from("team_members")
+  //     .select()
+  //     .eq("uid", data.user.id);
+  //   // This line is buggy
 
-    if (data && data.length === 0) {
-      navigate("/createuser");
-    }
+  //   if (data && data.length === 0) {
+  //     navigate("/createuser");
+  //   }
 
-    if (error) {
-      console.log(error);
-    }
-  };
+  //   if (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   return (
     <>
