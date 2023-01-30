@@ -7,10 +7,5 @@ import { AuthContext } from "../Context/AuthContext";
  **/
 
 export const EditUser = (props) => {
-  const { user } = useContext(AuthContext);
-
-  const fetchUser = () => {
-    
-  };
   return <div>EditUser</div>;
 };

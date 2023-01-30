@@ -29,6 +29,7 @@ export const CreateUser = (props) => {
   const [lighting, setLighting] = useState(false);
   const [chef, setChef] = useState(false);
   const [specialAgent, setSpecialAgent] = useState(false);
+  const [director, setDirector] = useState(false);
 
   useEffect(() => {
     fetchProfile(user.id);
@@ -60,6 +61,7 @@ export const CreateUser = (props) => {
         lighting,
         chef,
         specialAgent,
+        director,
       })
       .select();
 
@@ -165,6 +167,14 @@ export const CreateUser = (props) => {
               onClick={(e) => {
                 e.preventDefault();
                 setPropre(!propre);
+              }}
+            />
+            <CheckBlock
+              label="🎬 導演"
+              element={director}
+              onClick={(e) => {
+                e.preventDefault();
+                setDirector(!director);
               }}
             />
             <CheckBlock

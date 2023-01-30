@@ -24,8 +24,6 @@ export const Home = (props) => {
 
   return (
     <div>
-      <h1>Home</h1>
-      {user && user ? "got User" : "no user"}
       <Login />
     </div>
   );

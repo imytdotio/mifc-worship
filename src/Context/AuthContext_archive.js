@@ -67,7 +67,6 @@ export const AuthProvider = (props) => {
       setSession(data.session);
       setError(null);
       setIsAuthenticated(true);
-      console.log(data.user.id);
       fetchProfile(data.user.id);
     }
   };

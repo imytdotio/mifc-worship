@@ -33,7 +33,6 @@ export const Account = (props) => {
   return (
     <>
       <h1>Account</h1>
-      {profile && profile ? "profile" : "no profile"}
       {/* <Link to="/edituser">Edit</Link> */}
       {/* <h1 className="">{profile && profile.nickname}</h1> */}
       {array && (

@@ -58,7 +58,6 @@ export const AuthProvider = (props) => {
       setError(error);
       return;
     } else {
-      console.log("logged out");
       setUser(null);
       setSession(null);
     }
