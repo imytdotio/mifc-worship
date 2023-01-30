@@ -58,7 +58,7 @@ export const CreateUser = (props) => {
 
     if (data) {
       console.log(data);
-      navigate("/account");
+      navigate("/");
     }
 
     if (error) {
