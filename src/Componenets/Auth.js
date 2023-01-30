@@ -15,7 +15,7 @@ export const SignIn = (props) => {
 
   return (
     <div>
-      <div className="flex flex-col w-1/3 justify-center m-auto gap-2">
+      <div className="flex flex-col md:w-1/3 w-full justify-center m-auto gap-2">
         <Input
           value={email}
           onChange={(e) => {

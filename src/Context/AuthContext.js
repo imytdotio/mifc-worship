@@ -23,7 +23,7 @@ export const AuthProvider = (props) => {
     }
 
     if (data) {
-      console.log(data);
+      console.log('Signed Up');
       setError(null);
     }
   };

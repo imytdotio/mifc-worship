@@ -14,7 +14,7 @@ export const AuthProvider = (props) => {
     const { data, error } = await supabase.auth.signUp({ email, password });
 
     if (data) {
-      console.log(data);
+      console.log('Signed Up');
     }
 
     if (error) {
@@ -36,7 +36,7 @@ export const AuthProvider = (props) => {
     }
 
     if (data) {
-      console.log(data);
+      console.log('Fetched');
       setProfile(data[0]);
     }
   };

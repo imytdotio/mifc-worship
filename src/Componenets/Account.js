@@ -15,7 +15,11 @@ export const Account = (props) => {
   const [array, setArray] = useState(null);
 
   useEffect(() => {
-    fetchProfile(user.id);
+    if (!user) {
+      return;
+    } else {
+      fetchProfile(user.id);
+    }
     if (!profile) {
       navigate("/createuser");
     }
