@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../Context/AuthContext";
 import { supabase } from "../Config/supabase";
-import { Input } from "../Componenets/Components";
+import { Button, Input } from "../Componenets/Components";
 
 /**
  * @author
@@ -41,30 +41,32 @@ const Checkbox = (props) => {
 
 const Datey = (props) => {
   const { user } = useContext(AuthContext);
+  const [input, setInput] = useState(props.note);
 
   return (
-    <div className="flex flex-col md:flex-row m-auto justify-center py-4 px-8 rounded-xl border-2 border-slate-300 ">
+    <div className="flex flex-col md:flex-row m-auto justify-center py-4 px-4 rounded-xl border-2 border-slate-300 ">
       <div className="flex flex-row mb-2">
-        <p className="mr-2 my-auto flex-1 md:flex-none text-left">{props.date}</p>
+        <p className="mr-2 my-auto flex-1 md:flex-none text-left">
+          {props.date}
+        </p>
         <Checkbox
           isChecked={props.isChecked}
           onClick={(e) => {
             e.preventDefault();
-            props.setCheck(e.target.value);
+            props.setCheck();
             //   console.log(e.value);
           }}
         />
       </div>
-      <>
-        {" "}
-        <Input
-          value={props.note}
-          className="w-full"
-          onChange={(e) => {
-            props.setNote(e.target.value);
-          }}
-        />
-      </>
+
+      <input
+        className={`flex flex-row rounded-md bg-transparent border-2 py-2 px-4 focus:border-teal-400 w-full`}
+        onChange={(e) => {
+          setInput(e.target.value);
+          props.setNote(e.target.value);
+        }}
+        value={input}
+      />
     </div>
   );
 };
@@ -134,6 +136,7 @@ export const Availability = (props) => {
       console.log(data);
     }
   };
+  //   const [tempString, setTempString] = useState("");
 
   return (
     <div className="md:w-2/3 w-full m-auto ">
@@ -147,13 +150,10 @@ export const Availability = (props) => {
                 date={date.date}
                 isChecked={date.available}
                 note={date.note}
-                setCheck={(e) => {
-                  //   e.preventDefault();
+                setCheck={() => {
                   setCheck(user.id, date.date, date.available);
                 }}
-                setNote={(e) => {
-                  setNote(user.id, date.date, e.target.value);
-                }}
+                setNote={(tempStr) => setNote(user.id, date.date, tempStr)}
               />
             );
           })}
