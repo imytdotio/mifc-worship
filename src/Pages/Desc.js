@@ -81,8 +81,7 @@ export const Desc = (props) => {
   const [day, setDay] = useState("14");
   const [link, setLink] = useState("");
   return (
-    <div className="App m-12">
-      <h1 className="font-bold text-4xl mb-8">我唔會再打錯 Description</h1>
+    <div className="App">
       <a
         href="https://drive.google.com/drive/folders/1jfp-DfO8Dw3DsNfScjE6ajLNk57OeJzZ"
         target="_blank"
