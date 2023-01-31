@@ -43,22 +43,28 @@ const Datey = (props) => {
   const { user } = useContext(AuthContext);
 
   return (
-    <div className="flex flex-row m-auto justify-center py-4 px-8 rounded-xl border-2 border-slate-300 ">
-      <p className="mr-2 my-auto">{props.date}</p>
-      <Checkbox
-        isChecked={props.isChecked}
-        onClick={(e) => {
-          e.preventDefault();
-          props.setCheck(e.target.value);
-          //   console.log(e.value);
-        }}
-      />
-      <Input
-        value={props.note}
-        onChange={(e) => {
-          props.setNote(e.target.value);
-        }}
-      />
+    <div className="flex flex-col md:flex-row m-auto justify-center py-4 px-8 rounded-xl border-2 border-slate-300 ">
+      <div className="flex flex-row mb-2">
+        <p className="mr-2 my-auto flex-1 md:flex-none text-left">{props.date}</p>
+        <Checkbox
+          isChecked={props.isChecked}
+          onClick={(e) => {
+            e.preventDefault();
+            props.setCheck(e.target.value);
+            //   console.log(e.value);
+          }}
+        />
+      </div>
+      <>
+        {" "}
+        <Input
+          value={props.note}
+          className="w-full"
+          onChange={(e) => {
+            props.setNote(e.target.value);
+          }}
+        />
+      </>
     </div>
   );
 };
@@ -93,15 +99,16 @@ export const Availability = (props) => {
     fetchAvailability();
   }, []);
 
-  const checkAvailability = async (uid, date, availability) => {
-    console.log("checking");
+  const setCheck = async (uid, date, availability) => {
     const { data, error } = await supabase
       .from("availability")
       .update({ available: !availability })
       .eq("uid", uid)
-      .eq("date", date);
+      .eq("date", date)
+      .select();
     if (error) {
       console.log(error);
+      return;
     }
 
     if (data) {
@@ -109,11 +116,30 @@ export const Availability = (props) => {
     }
   };
 
+  const setNote = async (uid, date, note) => {
+    console.log("checking");
+    const { data, error } = await supabase
+      .from("availability")
+      .update({ note: note })
+      .eq("uid", uid)
+      .eq("date", date)
+      .select();
+
+    if (error) {
+      console.log(error);
+      return;
+    }
+
+    if (data) {
+      console.log(data);
+    }
+  };
+
   return (
-    <div className="md:w-2/3 w-full p-8 m-auto ">
+    <div className="md:w-2/3 w-full m-auto ">
       <h1>Availability</h1>
       <h1>{user && user.id}</h1>
-      <div className="flex flex-col m-auto justify-center p-8 gap-4">
+      <div className="flex flex-col m-auto justify-center p-4 gap-4">
         {dates &&
           dates.map((date) => {
             return (
@@ -123,7 +149,10 @@ export const Availability = (props) => {
                 note={date.note}
                 setCheck={(e) => {
                   //   e.preventDefault();
-                  checkAvailability(user.id, date.date, date.available);
+                  setCheck(user.id, date.date, date.available);
+                }}
+                setNote={(e) => {
+                  setNote(user.id, date.date, e.target.value);
                 }}
               />
             );
