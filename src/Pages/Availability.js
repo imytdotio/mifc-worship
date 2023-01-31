@@ -56,7 +56,7 @@ const Datey = (props) => {
       <Input
         value={props.note}
         onChange={(e) => {
-          //   props.setNote(props.date, e.target.value);
+          props.setNote(e.target.value);
         }}
       />
     </div>
@@ -93,6 +93,22 @@ export const Availability = (props) => {
     fetchAvailability();
   }, []);
 
+  const checkAvailability = async (uid, date, availability) => {
+    console.log("checking");
+    const { data, error } = await supabase
+      .from("availability")
+      .update({ available: !availability })
+      .eq("uid", uid)
+      .eq("date", date);
+    if (error) {
+      console.log(error);
+    }
+
+    if (data) {
+      //   console.log(data);
+    }
+  };
+
   return (
     <div className="md:w-2/3 w-full p-8 m-auto ">
       <h1>Availability</h1>
@@ -105,6 +121,10 @@ export const Availability = (props) => {
                 date={date.date}
                 isChecked={date.available}
                 note={date.note}
+                setCheck={(e) => {
+                  //   e.preventDefault();
+                  checkAvailability(user.id, date.date, date.available);
+                }}
               />
             );
           })}

@@ -70,7 +70,7 @@ export const AuthProvider = (props) => {
       .eq("uid", uid);
 
     if (data) {
-      console.log(data);
+      // console.log(data);
       setProfile(data[0]);
     }
 
