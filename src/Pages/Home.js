@@ -24,6 +24,7 @@ export const Home = (props) => {
 
   return (
     <div>
+      <a className='text-blue-600 underline m-4' href='https://drive.google.com/drive/folders/1jfp-DfO8Dw3DsNfScjE6ajLNk57OeJzZ'>Google Drive</a>
       <Login />
     </div>
   );

@@ -37,7 +37,6 @@ export const Account = (props) => {
 
   return (
     <>
-      <h1>Account</h1>
       <SignOut />
       {/* <Link to="/edituser">Edit</Link> */}
       {/* <h1 className="">{profile && profile.nickname}</h1> */}

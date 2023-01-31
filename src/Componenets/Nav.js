@@ -22,6 +22,17 @@ export const Nav = (props) => {
       >
         Home
       </NavLink>
+      
+      <NavLink
+        to="/desc"
+        className={({ isActive }) =>
+          isActive
+            ? `${nav} border-b-2 border-teal-400`
+            : `${nav} border-b-2 border-b-transparent`
+        }
+      >
+        Desc
+      </NavLink>
       {user ? (
         <>
           {" "}

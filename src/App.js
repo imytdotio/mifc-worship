@@ -8,6 +8,7 @@ import { Home } from "./Pages/Home";
 import { Login } from "./Pages/Login";
 import { Availability } from "./Pages/Availability";
 import { Test } from "./Pages/Test";
+import { Desc } from "./Pages/Desc";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Routes>
           <Route path="/" exact element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/desc" element={<Desc />} />
 
           {/* Logged In */}
           <Route path="/account" element={<Account />} />

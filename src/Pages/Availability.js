@@ -140,7 +140,6 @@ export const Availability = (props) => {
 
   return (
     <div className="md:w-2/3 w-full m-auto ">
-      <h1>Availability</h1>
       <h1>{user && user.id}</h1>
       <div className="flex flex-col m-auto justify-center p-4 gap-4">
         {dates &&
