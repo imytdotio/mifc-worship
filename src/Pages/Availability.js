@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../Context/AuthContext";
 import { supabase } from "../Config/supabase";
 import { Input } from "../Componenets/Components";
-import { Date } from "core-js";
 
 /**
  * @author
@@ -42,12 +41,7 @@ const Checkbox = (props) => {
 
 const Datey = (props) => {
   const { user } = useContext(AuthContext);
-  const setNote = async (date, value) => {
-    const { data, error } = await supabase
-      .from("note")
-      .eq("uid", user.id)
-      .update();
-  };
+
   return (
     <div className="flex flex-row m-auto justify-center py-4 px-8 rounded-xl border-2 border-slate-300 ">
       <p className="mr-2 my-auto">{props.date}</p>
@@ -71,6 +65,7 @@ const Datey = (props) => {
 
 export const Availability = (props) => {
   const { user } = useContext(AuthContext);
+  const [dates, setDates] = useState();
 
   useEffect(() => {
     const fetchAvailability = async () => {
@@ -85,7 +80,13 @@ export const Availability = (props) => {
       }
 
       if (data) {
-        console.log(data);
+        setDates(
+          data
+            .map(({ date, available, note }) => ({ date, available, note }))
+            .sort((a, b) => {
+              return new Date(a.date) - new Date(b.date);
+            })
+        );
       }
     };
 
@@ -97,7 +98,16 @@ export const Availability = (props) => {
       <h1>Availability</h1>
       <h1>{user && user.id}</h1>
       <div className="flex flex-col m-auto justify-center p-8 gap-4">
-        {/* <Datey date="2022-01-18" isChecked={false} note="happy" /> */}
+        {dates &&
+          dates.map((date) => {
+            return (
+              <Datey
+                date={date.date}
+                isChecked={date.available}
+                note={date.note}
+              />
+            );
+          })}
       </div>
     </div>
   );
