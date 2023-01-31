@@ -2,7 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../Config/supabase";
 import { AuthContext } from "../Context/AuthContext";
-import { Pill } from "./Components";
+import { Pill } from "../Componenets/Components";
+import { SignOut } from "../Componenets/Auth";
 
 /**
  * @author
@@ -37,6 +38,7 @@ export const Account = (props) => {
   return (
     <>
       <h1>Account</h1>
+      <SignOut />
       {/* <Link to="/edituser">Edit</Link> */}
       {/* <h1 className="">{profile && profile.nickname}</h1> */}
       {array && (

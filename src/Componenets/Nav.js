@@ -23,14 +23,33 @@ export const Nav = (props) => {
         Home
       </NavLink>
       {user ? (
-        <NavLink
-          to="/account"
-          className={({ isActive }) =>
-            isActive ? `border-b-2 border-teal-400 ${nav}` : `${nav}`
-          }
-        >
-          Account
-        </NavLink>
+        <>
+          {" "}
+          {/* <NavLink
+            to="/test"
+            className={({ isActive }) =>
+              isActive ? `border-b-2 border-teal-400 ${nav}` : `${nav}`
+            }
+          >
+            Test
+          </NavLink> */}
+          <NavLink
+            to="/availability"
+            className={({ isActive }) =>
+              isActive ? `border-b-2 border-teal-400 ${nav}` : `${nav}`
+            }
+          >
+            Availability
+          </NavLink>
+          <NavLink
+            to="/account"
+            className={({ isActive }) =>
+              isActive ? `border-b-2 border-teal-400 ${nav}` : `${nav}`
+            }
+          >
+            Account
+          </NavLink>
+        </>
       ) : (
         ""
       )}

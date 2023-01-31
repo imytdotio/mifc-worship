@@ -9,6 +9,61 @@ import { AuthContext } from "../Context/AuthContext";
  * @function CreateUser
  **/
 
+const saturdays = [
+  "2023-01-07",
+  "2023-01-14",
+  "2023-01-21",
+  "2023-01-28",
+  "2023-02-04",
+  "2023-02-11",
+  "2023-02-18",
+  "2023-02-25",
+  "2023-03-04",
+  "2023-03-11",
+  "2023-03-18",
+  "2023-03-25",
+  "2023-04-01",
+  "2023-04-08",
+  "2023-04-15",
+  "2023-04-22",
+  "2023-04-29",
+  "2023-05-06",
+  "2023-05-13",
+  "2023-05-20",
+  "2023-05-27",
+  "2023-06-03",
+  "2023-06-10",
+  "2023-06-17",
+  "2023-06-24",
+  "2023-07-01",
+  "2023-07-08",
+  "2023-07-15",
+  "2023-07-22",
+  "2023-07-29",
+  "2023-08-05",
+  "2023-08-12",
+  "2023-08-19",
+  "2023-08-26",
+  "2023-09-02",
+  "2023-09-09",
+  "2023-09-16",
+  "2023-09-23",
+  "2023-09-30",
+  "2023-10-07",
+  "2023-10-14",
+  "2023-10-21",
+  "2023-10-28",
+  "2023-11-04",
+  "2023-11-11",
+  "2023-11-18",
+  "2023-11-25",
+  "2023-12-02",
+  "2023-12-09",
+  "2023-12-16",
+  "2023-12-23",
+  "2023-12-30",
+];
+
 export const CreateUser = (props) => {
   const navigate = useNavigate();
   const { user, fetchProfile, profile } = useContext(AuthContext);
@@ -37,6 +92,22 @@ export const CreateUser = (props) => {
       navigate("/");
     }
   }, []);
+
+  const insertSaturdays = async (uid) => {
+    for (const saturday of saturdays) {
+      const { data, error } = await supabase
+        .from("availability")
+        .insert([{ uid, date: new Date(saturday), note: "" }]);
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+      if (data) {
+        console.log(data);
+      }
+    }
+  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -67,6 +138,7 @@ export const CreateUser = (props) => {
 
     if (data) {
       console.log(data);
+      insertSaturdays(user.id);
       navigate("/");
     }
 
