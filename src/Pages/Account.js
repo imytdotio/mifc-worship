@@ -13,12 +13,19 @@ import { EditUser } from "../Componenets/EditUser";
 
 export const Account = (props) => {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user === null) {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <>
       <SignOut />
       {/* <Link to="/edituser">Edit</Link> */}
-      {user && <EditUser uid='4e74e07f-d36f-4eb4-9654-802989c0d26e' />}
+      {user && <EditUser uid="4e74e07f-d36f-4eb4-9654-802989c0d26e" />}
       {/* <Auth /> */}
     </>
   );
