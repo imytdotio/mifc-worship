@@ -11,9 +11,6 @@ import { CheckBlock, Input } from "./Components";
 export const EditUser = (props) => {
   const { user } = useContext(AuthContext);
 
-  // const [nickname, setNickname] = useState(null);
-  // const [phoneNumber, setPhoneNumber] = useState(null);
-
   const reducer = (state, action) => {
     switch (action.type) {
       case "CHANGE_NICKNAME":
@@ -48,7 +45,6 @@ export const EditUser = (props) => {
       return;
     }
     if (data) {
-      console.log(data);
     }
   };
 
@@ -63,7 +59,6 @@ export const EditUser = (props) => {
       return;
     }
     if (data) {
-      console.log(data);
     }
   };
 
@@ -115,7 +110,7 @@ export const EditUser = (props) => {
       return;
     }
     if (data) {
-      setSkills(data);
+      setSkills(data.filter(skill => skill.skill !== 0));
     }
   };
   useEffect(() => {

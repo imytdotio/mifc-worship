@@ -21,9 +21,9 @@ const Checkbox = (props) => {
         onClick={props.onClick}
       />
       <span
-        className={`${
-          isChecked ? "bg-teal-300" : "bg-gray-300"
-        } w-6 h-6 rounded-lg flex items-center justify-center`}
+        className={`hover:shadow-md duration-200 border-2 border-transparent hover:border-2  ${
+          isChecked ? "bg-teal-300 hover:border-teal-600" : "bg-gray-200 hover:border-teal-300"
+        } w-6 h-6 rounded-lg flex items-center justify-center `}
       >
         {isChecked && (
           <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
