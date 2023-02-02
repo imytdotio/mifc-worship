@@ -12,6 +12,7 @@ export const SignIn = (props) => {
   const { error, signUp, signInWithPassword } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [signedUp, setSignedUp] = useState("");
 
   return (
     <div>
@@ -37,6 +38,7 @@ export const SignIn = (props) => {
             className="flex-1"
             onClick={() => {
               signUp(email, password);
+              setSignedUp("Check your email.");
             }}
           >
             Sign up
@@ -51,7 +53,8 @@ export const SignIn = (props) => {
             Sign In
           </Button>
         </div>
-        <p>{error && error.message}</p>
+        <p className="text-red-600">{error && error.message}</p>
+        <p className="text-teal-600 font-bold">{!error && signedUp && signedUp}</p>
       </div>
     </div>
   );
@@ -79,4 +82,3 @@ export const SignOut = () => {
     </div>
   );
 };
-
