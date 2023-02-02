@@ -113,6 +113,7 @@ export const EditUser = (props) => {
       setSkills(data.filter(skill => skill.skill !== 0));
     }
   };
+  
   useEffect(() => {
     fetchSkillNames();
     fetchSkills(props.uid);
