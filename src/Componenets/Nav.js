@@ -35,7 +35,6 @@ export const Nav = (props) => {
       </NavLink>
       {user ? (
         <>
-          {" "}
           {/* <NavLink
             to="/test"
             className={({ isActive }) =>

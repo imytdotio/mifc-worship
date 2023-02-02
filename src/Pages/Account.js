@@ -2,8 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../Config/supabase";
 import { AuthContext } from "../Context/AuthContext";
-import { Pill } from "../Componenets/Components";
+import { CheckBlock, Pill } from "../Componenets/Components";
 import { SignOut } from "../Componenets/Auth";
+import { EditUser } from "../Componenets/EditUser";
 
 /**
  * @author
@@ -11,45 +12,13 @@ import { SignOut } from "../Componenets/Auth";
  **/
 
 export const Account = (props) => {
-  const navigate = useNavigate();
-  const { user, profile, fetchProfile } = useContext(AuthContext);
-  const [array, setArray] = useState(null);
-
-  useEffect(() => {
-    if (!user) {
-      return;
-    } else {
-      fetchProfile(user.id);
-    }
-    if (!profile) {
-      navigate("/createuser");
-    }
-    if (profile) {
-      setArray(
-        Object.keys(profile)
-          .map((key) => [key, profile[key]])
-          .filter((arr) => {
-            return arr[1] === true;
-          })
-      );
-    }
-  }, []);
+  const { user } = useContext(AuthContext);
 
   return (
     <>
       <SignOut />
       {/* <Link to="/edituser">Edit</Link> */}
-      {/* <h1 className="">{profile && profile.nickname}</h1> */}
-      {array && (
-        <>
-          <p className="mt-4">Skills</p>
-          <p>{profile.nickname}</p>
-          {array.map((skill) => {
-            return <Pill key={skill[0]}>{skill[0]}</Pill>;
-          })}
-        </>
-      )}
-
+      {user && <EditUser uid='4e74e07f-d36f-4eb4-9654-802989c0d26e' />}
       {/* <Auth /> */}
     </>
   );

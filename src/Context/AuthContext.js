@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
 import { supabase } from "../Config/supabase";
+import { saturdays } from "../data/Saturdays";
 
 export const AuthContext = createContext();
 
@@ -7,9 +8,8 @@ export const AuthProvider = (props) => {
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
   const [session, setSession] = useState(null);
-  const [profile, setProfile] = useState(null);
 
-  // Functions ------------------------------------------------------------------
+  // Basic Functions ------------------------------------------------------------------
   const signUp = async (email, password) => {
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -23,8 +23,11 @@ export const AuthProvider = (props) => {
     }
 
     if (data) {
-      console.log('Signed Up');
+      console.log("Signed Up");
       setError(null);
+      insertSaturdays(data.user.id);
+      fetch18Skills(data.user.id);
+      createInfo(data.user.id)
     }
   };
 
@@ -44,7 +47,6 @@ export const AuthProvider = (props) => {
     if (data) {
       console.log(data);
       setUser(data.user);
-      fetchProfile(data.user.id);
       setSession(data.session);
       setError(null);
     }
@@ -63,20 +65,59 @@ export const AuthProvider = (props) => {
     }
   };
 
-  const fetchProfile = async (uid) => {
-    const { data, error } = await supabase
-      .from("team_members")
-      .select()
-      .eq("uid", uid);
-
-    if (data) {
-      // console.log(data);
-      setProfile(data[0]);
-    }
-
+  // Extra Functions ------------------------------------------------------------------
+  const createInfo = async (uid) => {
+    const { data, error } = await supabase.from("members_info").insert({ uid });
     if (error) {
       console.log(error);
-      setError(error);
+      return;
+    }
+  };
+
+  const fetch18Skills = async (uid) => {
+    const { data, error } = await supabase.from("skills").select();
+    if (error) {
+      console.log(error);
+      return;
+    }
+
+    if (data) {
+      console.log(data);
+      // setSkills(data);
+      createProfile(uid, data);
+    }
+  };
+
+  const createProfile = async (uid, skills) => {
+    for (const skill of skills) {
+      // console.log(skill.id);
+      const { data, error } = await supabase
+        .from("profile")
+        .insert({ uid, skill: skill.id, haveSkill: false });
+      if (error) {
+        console.log(error);
+        return;
+      }
+
+      if (data) {
+        console.log(data);
+      }
+    }
+  };
+
+  const insertSaturdays = async (uid) => {
+    for (const saturday of saturdays) {
+      const { data, error } = await supabase
+        .from("availability")
+        .insert([{ uid, date: new Date(saturday), note: "" }]);
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+      if (data) {
+        console.log(data);
+      }
     }
   };
 
@@ -89,8 +130,6 @@ export const AuthProvider = (props) => {
         error,
         user,
         session,
-        fetchProfile,
-        profile,
       }}
     >
       {props.children}

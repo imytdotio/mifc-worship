@@ -45,7 +45,7 @@ const Datey = (props) => {
 
   return (
     <div className="flex flex-col md:flex-row m-auto justify-center py-4 px-4 rounded-xl border-2 border-slate-300 ">
-      <div className="flex flex-row mb-2">
+      <div className="flex flex-row mb-2 my-auto h-full">
         <p className="mr-2 my-auto flex-1 md:flex-none text-left">
           {props.date}
         </p>

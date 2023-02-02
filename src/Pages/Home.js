@@ -13,9 +13,7 @@ export const Home = (props) => {
   const [user, setUser] = useState(null);
   const getUser = async () => {
     const { data } = await supabase.auth.getUser();
-
     setUser(data.user);
-    console.log(data);
   };
 
   useEffect(() => {

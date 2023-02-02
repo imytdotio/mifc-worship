@@ -3,7 +3,6 @@ import "./App.css";
 import { Account } from "./Pages/Account";
 import { Nav } from "./Componenets/Nav";
 import { CreateUser } from "./Pages/CreateUser";
-import { EditUser } from "./Pages/EditUser";
 import { Home } from "./Pages/Home";
 import { Login } from "./Pages/Login";
 import { Availability } from "./Pages/Availability";
@@ -26,7 +25,6 @@ function App() {
           {/* Logged In */}
           <Route path="/account" element={<Account />} />
           <Route path="/createuser" element={<CreateUser />} />
-          <Route path="/edituser" element={<EditUser />} />
           <Route path="/availability" element={<Availability />} />
           <Route path="/test" element={<Test />} />
         </Routes>

@@ -6,13 +6,8 @@ import React, { useState } from "react";
  **/
 
 const Youtube = (props) => {
-  const [text, setText] = useState("");
   return (
-    <div
-      onChange={(e) => {
-        console.log(e.target.value);
-      }}
-    >
+    <div>
       {/* <button
           className="bg-blue-600 text-white p-2 mt-8 rounded-md"
           disabled
@@ -29,7 +24,8 @@ const Youtube = (props) => {
       </h1>
       <p>【點擊連結網上參與：{props.link} 】</p>
       <br />
-      <p>
+      {/* <p>{props.tags}</p> */}
+      {/* <p>
         🗓 網上崇拜點樣參與好呢？ <br />
         1. 這是崇拜，一齊敬拜，由頭參與到尾。 <br />
         2. 搵一個可以專心嘅場地 <br />
@@ -39,7 +35,7 @@ const Youtube = (props) => {
         6. 歡迎將你的祈禱打在留言 <br />
         7. 嚴禁不恰當、人身攻擊、廣告及惡意洗版留言。
         請大家謹記耶穌的教訓，學習尊重別人，注意言詞，以禮相待。多謝合作。{" "}
-      </p>
+      </p> */}
       <br />.
       <p>
         🌊{props.year}
@@ -80,6 +76,7 @@ export const Desc = (props) => {
   const [month, setMonth] = useState("01");
   const [day, setDay] = useState("14");
   const [link, setLink] = useState("");
+  // const [tags, setTags] = useState("");
   return (
     <div className="App">
       <a
@@ -144,6 +141,15 @@ export const Desc = (props) => {
               />
             </label>
           </li>
+          {/* <li className="p-2">
+            <label>
+              Tags:
+              <textarea
+                onChange={(e) => setTags(e.target.value)}
+                className="border-b-2 border-gray-200 mx-2 bg-transparent focus:border-teal-400"
+              />
+            </label>
+          </li> */}
         </ul>
 
         <div className="text-left">
@@ -158,6 +164,7 @@ export const Desc = (props) => {
               month={month}
               day={day}
               link={link}
+              // tags={tags}
             />
           )}
         </div>

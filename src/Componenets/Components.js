@@ -8,7 +8,7 @@ import React from "react";
 export const Input = (props) => {
   return (
     <input
-      className={`rounded-md border-2 py-2 px-4 focus:border-teal-400 ${props.className}`}
+      className={`rounded-md border-2 py-2 px-4 my-2 focus:border-teal-400 ${props.className}`}
       placeholder={props.placeholder}
       onChange={props.onChange}
       onBlur={props.onBlur}
