@@ -19,6 +19,7 @@ export const SignIn = (props) => {
       <div className="flex flex-col md:w-1/3 w-full justify-center m-auto gap-2">
         <Input
           value={email}
+          placeholder='email'
           onChange={(e) => {
             e.preventDefault();
             setEmail(e.target.value);
@@ -27,6 +28,7 @@ export const SignIn = (props) => {
         />
         <Input
           value={password}
+          placeholder='password'
           onChange={(e) => {
             e.preventDefault();
             setPassword(e.target.value);

@@ -147,6 +147,7 @@ export const Availability = (props) => {
             return (
               <Datey
                 date={date.date}
+                key={date.id}
                 isChecked={date.available}
                 note={date.note}
                 setCheck={() => {
