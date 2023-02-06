@@ -10,6 +10,7 @@ import { AuthContext } from "../Context/AuthContext";
 export const Test = (props) => {
   const { user } = useContext(AuthContext);
   const [availables, setAvailables] = useState();
+  const [userInfo, setUserInfo] = useState();
   const fetchDate = async () => {
     const { data, error } = await supabase
       .from("availability")
@@ -34,9 +35,23 @@ export const Test = (props) => {
     }
   };
 
+  const findNickname = async () => {
+    const { data, error } = await supabase
+      .from("members_info")
+      .select("uid, nickname");
+    if (error) {
+      console.log(error);
+      return;
+    }
+    if (data) {
+      setUserInfo(data);
+      console.log(data);
+    }
+  };
+
   useEffect(() => {
+    findNickname();
     fetchDate();
-    availables && console.log(availables);
   }, []);
   return (
     <div className="md:w-2/3 w-full m-auto ">
@@ -47,11 +62,16 @@ export const Test = (props) => {
           return (
             <>
               <h2 className="font-bold">{available.date}</h2>
-              <p>
+              <>
                 {available.uid.map((uid) => {
-                  return <p>{uid}</p>;
+                  return (
+                    <p key={uid}>
+                      {userInfo &&
+                        userInfo.filter((info) => info.uid === uid)[0].nickname}
+                    </p>
+                  );
                 })}
-              </p>
+              </>
             </>
           );
         })}
