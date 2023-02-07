@@ -136,7 +136,8 @@ export const EditUser = (props) => {
   };
 
   return (
-    <div className="py-4 px-2 lg:w-1/3 w-full m-auto bg-white rounded-xl shadow-lg my-4">
+    <div className="py-4 px-2 md:w-2/5 w-full m-auto bg-white rounded-xl shadow-lg my-4">
+      {/* md:w-2/5 = 2/3*2/3 */}
       <div className="flex flex-col">
         <Input
           placeholder="平時啲人點叫你？"

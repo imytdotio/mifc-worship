@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { BiMenu } from "react-icons/bi";
 import { NavLink } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
@@ -7,11 +7,27 @@ import { AuthContext } from "../Context/AuthContext";
 export const Nav = () => {
   const { user } = useContext(AuthContext);
   const [navbarOpen, setNavbarOpen] = React.useState(false);
+  const navRef = useRef(null);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (navbarOpen && !navRef.current.contains(event.target)) {
+        setNavbarOpen(false);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [navbarOpen]);
+
   const navStyle =
     "text-right px-3 py-2 text-xs uppercase font-bold leading-snug text-slate-800 hover:bg-teal-400/25 rounded-md";
   return (
     <>
-      <nav className="relative flex flex-wrap items-center justify-between md:px-2 px-0 py-3 mb-3 md:w-2/3 w-full mx-auto">
+      <nav
+        ref={navRef}
+        className="relative flex flex-wrap items-center justify-between md:px-2 px-0 py-3 mb-3 md:w-2/3 w-full mx-auto"
+      >
         <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
           <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
             <NavLink
