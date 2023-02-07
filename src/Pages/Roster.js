@@ -125,7 +125,6 @@ export const Roster = (props) => {
   }, [availables, userInfo, skills]);
   return (
     <div className="md:w-2/3 w-full m-auto ">
-      <h1>Roster</h1>
       <h1>{user && user.id}</h1>
 
       {result &&

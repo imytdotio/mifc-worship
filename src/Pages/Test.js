@@ -93,14 +93,6 @@ export const Test = (props) => {
     fetchSkills();
   }, []);
 
-  // useEffect(() => {
-  //   if (userInfo && skills && availables) {
-  //     console.log("userInfo", userInfo);
-  //     console.log("skills", skills);
-  //     console.log("availables", availables);
-  //   }
-  // }, [userInfo, skills, availables]);
-
   useEffect(() => {
     if (availables.length && userInfo.length && skills.length) {
       const result = {};
@@ -120,7 +112,18 @@ export const Test = (props) => {
         });
       });
 
-      setResult(result);
+      const filteredResult = {};
+      const currentDate = new Date();
+
+      for (const date in result) {
+        if (new Date(date) > currentDate) {
+          filteredResult[date] = result[date];
+        }
+      }
+
+      // console.log(filteredResult);
+
+      setResult(filteredResult);
     }
   }, [availables, userInfo, skills]);
   return (
@@ -128,12 +131,12 @@ export const Test = (props) => {
       <h1>Test</h1>
       <h1>{user && user.id}</h1>
 
-      {result &&
+      {/* {result &&
         Object.keys(result)
           .filter(date => new Date(date) < new Date())
           .map((date) => {
-            console.log('blue', new Date(date));
-          })}
+            console.log('after', new Date(date));
+          })} */}
 
       {Object.keys(result).map((date) => (
         <div
