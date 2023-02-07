@@ -136,7 +136,7 @@ export const EditUser = (props) => {
   };
 
   return (
-    <div className="py-4 md:w-2/3 w-full m-auto ">
+    <div className="py-4 px-2 lg:w-1/3 w-full m-auto bg-white rounded-xl shadow-lg my-4">
       <div className="flex flex-col">
         <Input
           placeholder="平時啲人點叫你？"
@@ -148,7 +148,7 @@ export const EditUser = (props) => {
             updateNickname(user.id);
           }}
           required={true}
-          className="md:w-1/3 w-full m-auto"
+          className="m-auto"
         />
         <Input
           placeholder="電話號碼"
@@ -160,7 +160,7 @@ export const EditUser = (props) => {
             updatePhoneNumber(user.id);
           }}
           required={true}
-          className="md:w-1/3 w-full m-auto"
+          className="m-auto"
         />
       </div>
       {skills &&
