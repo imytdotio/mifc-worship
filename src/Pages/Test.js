@@ -93,13 +93,13 @@ export const Test = (props) => {
     fetchSkills();
   }, []);
 
-  useEffect(() => {
-    if (userInfo && skills && availables) {
-      console.log("userInfo", userInfo);
-      console.log("skills", skills);
-      console.log("availables", availables);
-    }
-  }, [userInfo, skills, availables]);
+  // useEffect(() => {
+  //   if (userInfo && skills && availables) {
+  //     console.log("userInfo", userInfo);
+  //     console.log("skills", skills);
+  //     console.log("availables", availables);
+  //   }
+  // }, [userInfo, skills, availables]);
 
   useEffect(() => {
     if (availables.length && userInfo.length && skills.length) {
@@ -127,9 +127,15 @@ export const Test = (props) => {
     <div className="md:w-2/3 w-full m-auto ">
       <h1>Test</h1>
       <h1>{user && user.id}</h1>
+      {result &&
+        Object.keys(result).map((date) => {
+          // console.log(Date(date));
+          console.log('dad', Date(date));
+        })}
+
       {Object.keys(result).map((date) => (
         <div
-          className="bg-white rounded-md p-6 shadow-md mb-4 text-left md:w-1/3 w-full m-auto"
+          className="bg-white rounded-md p-6 shadow-md mb-4 text-left 2xl:w-1/3 lg:w-2/3 w-full m-auto"
           key={date}
         >
           <h1 className="font-bold mb-4 text-center">{date}</h1>
@@ -137,7 +143,14 @@ export const Test = (props) => {
           {Object.keys(result[date]).map((skillName) => (
             <div className="mb-1 flex flex-row" key={skillName}>
               <p className="font-bold w-20 text-right mr-4">{skillName} </p>
-              <p>{result[date][skillName].join(", ")}</p>
+              {/* <p>{result[date][skillName].join(", ")}</p> */}
+              {result[date][skillName].map((i) => {
+                return (
+                  <p className="bg-gray-200 mr-2 px-2 rounded-md hover:bg-teal-400 hover:text-white hover:font-bold">
+                    {i}
+                  </p>
+                );
+              })}
             </div>
           ))}
         </div>
