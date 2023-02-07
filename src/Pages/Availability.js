@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../Context/AuthContext";
 import { supabase } from "../Config/supabase";
-import { Button, Input } from "../Componenets/Components";
 
 /**
  * @author
@@ -12,7 +11,7 @@ const Checkbox = (props) => {
   const [isChecked, setIsChecked] = useState(props.isChecked);
 
   return (
-    <label className="relative cursor-pointer my-auto mr-2">
+    <label className="relative cursor-pointer my-auto md:mr-2 md:w-12">
       <input
         type="checkbox"
         className="hidden"
@@ -44,7 +43,7 @@ const Datey = (props) => {
   const [input, setInput] = useState(props.note);
 
   return (
-    <div className="flex flex-col md:flex-row m-auto justify-center py-4 px-4 rounded-xl border-2 border-slate-300 ">
+    <div className="flex flex-col md:flex-row md:w-2/3 m-auto w-full justify-center py-4 px-4 rounded-xl border-2 border-slate-300 ">
       <div className="flex flex-row mb-2 my-auto h-full">
         <p className="mr-2 my-auto flex-1 md:flex-none text-left">
           {props.date}

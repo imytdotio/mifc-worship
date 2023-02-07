@@ -9,9 +9,12 @@ import { AuthContext } from "../Context/AuthContext";
 
 export const Test = (props) => {
   const { user } = useContext(AuthContext);
-  const [availables, setAvailables] = useState();
-  const [userInfo, setUserInfo] = useState();
-  const fetchDate = async () => {
+  const [availables, setAvailables] = useState([]);
+  const [userInfo, setUserInfo] = useState([]);
+  const [skills, setSkills] = useState([]);
+  const [result, setResult] = useState({});
+
+  const fetchAvailables = async () => {
     const { data, error } = await supabase
       .from("availability")
       .select("date, uid")
@@ -35,7 +38,7 @@ export const Test = (props) => {
     }
   };
 
-  const findNickname = async () => {
+  const fetchUserInfo = async () => {
     const { data, error } = await supabase
       .from("members_info")
       .select("uid, nickname");
@@ -45,38 +48,100 @@ export const Test = (props) => {
     }
     if (data) {
       setUserInfo(data);
-      console.log(data);
+      console.log("data", data);
+    }
+  };
+
+  const fetchSkills = async () => {
+    const { data, error } = await supabase
+      .from("profile")
+      .select(
+        `uid, 
+      skill, 
+      skills(name)`
+      )
+      .eq("haveSkill", true);
+
+    if (error) {
+      console.log(error);
+      return;
+    }
+    if (data) {
+      const trimmedSkill = data
+        .reduce((acc, curr) => {
+          const existingSkill = acc.find((s) => s.skill === curr.skill);
+          if (existingSkill) {
+            existingSkill.uid.push(curr.uid);
+          } else {
+            acc.push({
+              skill: curr.skill,
+              skillName: curr.skills.name,
+              uid: [curr.uid],
+            });
+          }
+          return acc;
+        }, [])
+        .sort((a, b) => a.skill > b.skill);
+      setSkills(trimmedSkill);
+      console.log(trimmedSkill);
     }
   };
 
   useEffect(() => {
-    findNickname();
-    fetchDate();
+    fetchUserInfo();
+    fetchAvailables();
+    fetchSkills();
   }, []);
+
+  useEffect(() => {
+    if (userInfo && skills && availables) {
+      console.log("userInfo", userInfo);
+      console.log("skills", skills);
+      console.log("availables", availables);
+    }
+  }, [userInfo, skills, availables]);
+
+  useEffect(() => {
+    if (availables.length && userInfo.length && skills.length) {
+      const result = {};
+
+      availables.forEach((available) => {
+        result[available.date] = {};
+        available.uid.forEach((uid) => {
+          const user = userInfo.find((userInfo) => userInfo.uid === uid);
+          skills.forEach((skill) => {
+            if (skill.uid.includes(uid)) {
+              if (!result[available.date][skill.skillName]) {
+                result[available.date][skill.skillName] = [];
+              }
+              result[available.date][skill.skillName].push(user.nickname);
+            }
+          });
+        });
+      });
+
+      setResult(result);
+    }
+  }, [availables, userInfo, skills]);
   return (
     <div className="md:w-2/3 w-full m-auto ">
       <h1>Test</h1>
       <h1>{user && user.id}</h1>
-      {availables &&
-        availables.map((available) => {
-          return (
-            <>
-              <h2 className="font-bold">{available.date}</h2>
-              <>
-                {available.uid.map((uid) => {
-                  return (
-                    <p key={uid}>
-                      {userInfo &&
-                        userInfo.filter((info) => info.uid === uid)[0].nickname}
-                    </p>
-                  );
-                })}
-              </>
-            </>
-          );
-        })}
-      <></>
-      {/* <div className="flex flex-col m-auto justify-center p-8 gap-4"></div> */}
+      {Object.keys(result).map((date) => (
+        <div
+          className="bg-white rounded-md p-6 shadow-md mb-4 text-left md:w-1/3 w-full m-auto"
+          key={date}
+        >
+          <h1 className="font-bold mb-4 text-center">{date}</h1>
+
+          {Object.keys(result[date]).map((skillName) => (
+            <div className="mb-1 flex flex-row" key={skillName}>
+              <p className="font-bold w-20 text-right mr-4">{skillName} </p>
+              <p>{result[date][skillName].join(", ")}</p>
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 };
