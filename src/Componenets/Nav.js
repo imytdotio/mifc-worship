@@ -1,78 +1,66 @@
 import React, { useContext } from "react";
+import { BiMenu } from "react-icons/bi";
 import { NavLink } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
+// AiOutlineMenu
 
-/**
- * @author
- * @function Nav
- **/
-
-export const Nav = (props) => {
+export const Nav = () => {
   const { user } = useContext(AuthContext);
-  const nav = "hover:border-b-2 hover:border-teal-400 duration-100 ease-in-out";
+  const [navbarOpen, setNavbarOpen] = React.useState(false);
+  const navStyle =
+    "text-right px-3 py-2 text-xs uppercase font-bold leading-snug text-slate-800 hover:bg-teal-400/25 rounded-md";
   return (
-    <nav className="flex flex-row gap-2 justify-center my-2">
-      <NavLink
-        to="/"
-        className={({ isActive }) =>
-          isActive
-            ? `${nav} border-b-2 border-teal-400`
-            : `${nav} border-b-2 border-b-transparent`
-        }
-      >
-        Home
-      </NavLink>
-      
-      <NavLink
-        to="/desc"
-        className={({ isActive }) =>
-          isActive
-            ? `${nav} border-b-2 border-teal-400`
-            : `${nav} border-b-2 border-b-transparent`
-        }
-      >
-        Desc
-      </NavLink>
-      <NavLink
-        to="/roster"
-        className={({ isActive }) =>
-          isActive
-            ? `${nav} border-b-2 border-teal-400`
-            : `${nav} border-b-2 border-b-transparent`
-        }
-      >
-        Roster
-      </NavLink>
-      {user ? (
-        <>
-          <NavLink
-            to="/test"
-            className={({ isActive }) =>
-              isActive ? `border-b-2 border-teal-400 ${nav}` : `${nav}`
+    <>
+      <nav className="relative flex flex-wrap items-center justify-between md:px-2 px-0 py-3 mb-3 md:w-2/3 w-full mx-auto">
+        <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
+          <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
+            <NavLink
+              className="text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-slate-800"
+              to="/"
+            >
+              🌊 Flow Worship
+            </NavLink>
+            <button
+              className="text-slate-800 cursor-pointer text-xl leading-none md:px-3 px-0 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none"
+              type="button"
+              onClick={() => setNavbarOpen(!navbarOpen)}
+            >
+              <BiMenu />
+            </button>
+          </div>
+          <div
+            className={
+              "lg:flex flex-grow items-center" +
+              (navbarOpen ? " flex" : " hidden")
             }
           >
-            Test
-          </NavLink>
-          <NavLink
-            to="/availability"
-            className={({ isActive }) =>
-              isActive ? `border-b-2 border-teal-400 ${nav}` : `${nav}`
-            }
-          >
-            Availability
-          </NavLink>
-          <NavLink
-            to="/account"
-            className={({ isActive }) =>
-              isActive ? `border-b-2 border-teal-400 ${nav}` : `${nav}`
-            }
-          >
-            Account
-          </NavLink>
-        </>
-      ) : (
-        ""
-      )}
-    </nav>
+            <ul className="flex flex-col lg:flex-row list-none lg:ml-auto gap-2 justify-end w-full">
+              <NavLink to="/desc" className={navStyle}>
+                Description
+              </NavLink>
+
+              <NavLink to="/roster" className={navStyle}>
+                Roster
+              </NavLink>
+
+              {user ? (
+                <>
+                  {" "}
+                  <NavLink to="/availability" className={navStyle}>
+                    Availability
+                  </NavLink>
+                </>
+              ) : (
+                ""
+              )}
+
+              <NavLink to={user ? "/account" : "/login"} className={navStyle}>
+                {user ? "Account" : "sign in"}
+              </NavLink>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </>
   );
 };

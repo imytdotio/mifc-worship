@@ -7,7 +7,7 @@ import React, { useState } from "react";
 
 const Youtube = (props) => {
   return (
-    <div>
+    <div >
       {/* <button
           className="bg-blue-600 text-white p-2 mt-8 rounded-md"
           disabled
@@ -78,7 +78,7 @@ export const Desc = (props) => {
   const [link, setLink] = useState("");
   // const [tags, setTags] = useState("");
   return (
-    <div className="App">
+    <div className="App md:w-2/3 w-full mx-auto">
       <a
         href="https://drive.google.com/drive/folders/1jfp-DfO8Dw3DsNfScjE6ajLNk57OeJzZ"
         target="_blank"
