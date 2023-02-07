@@ -33,6 +33,16 @@ export const Nav = (props) => {
       >
         Desc
       </NavLink>
+      <NavLink
+        to="/roster"
+        className={({ isActive }) =>
+          isActive
+            ? `${nav} border-b-2 border-teal-400`
+            : `${nav} border-b-2 border-b-transparent`
+        }
+      >
+        Roster
+      </NavLink>
       {user ? (
         <>
           <NavLink

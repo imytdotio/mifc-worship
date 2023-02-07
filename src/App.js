@@ -8,6 +8,7 @@ import { Login } from "./Pages/Login";
 import { Availability } from "./Pages/Availability";
 import { Test } from "./Pages/Test";
 import { Desc } from "./Pages/Desc";
+import { Roster } from "./Pages/Roster";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/account" element={<Account />} />
           <Route path="/createuser" element={<CreateUser />} />
           <Route path="/availability" element={<Availability />} />
+          <Route path="/roster" element={<Roster />} />
           <Route path="/test" element={<Test />} />
         </Routes>
       </BrowserRouter>

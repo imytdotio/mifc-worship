@@ -7,7 +7,7 @@ import { AuthContext } from "../Context/AuthContext";
  * @function Test
  **/
 
-export const Test = (props) => {
+export const Roster = (props) => {
   const { user } = useContext(AuthContext);
   const [availables, setAvailables] = useState([]);
   const [userInfo, setUserInfo] = useState([]);
