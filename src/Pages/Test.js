@@ -126,6 +126,7 @@ export const Test = (props) => {
       setResult(filteredResult);
     }
   }, [availables, userInfo, skills]);
+  
   return (
     <div className="md:w-2/3 w-full m-auto ">
       <h1>Test</h1>
