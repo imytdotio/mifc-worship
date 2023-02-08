@@ -21,7 +21,9 @@ const Checkbox = (props) => {
       />
       <span
         className={`hover:shadow-md duration-200 border-2 border-transparent hover:border-2  ${
-          isChecked ? "bg-teal-300 hover:border-teal-600" : "bg-gray-200 hover:border-teal-300"
+          isChecked
+            ? "bg-teal-300 hover:border-teal-600"
+            : "bg-gray-200 hover:border-teal-300"
         } w-6 h-6 rounded-lg flex items-center justify-center `}
       >
         {isChecked && (
@@ -89,6 +91,9 @@ export const Availability = (props) => {
       if (data) {
         setDates(
           data
+            .filter(({ date }) => {
+              return new Date(date) > new Date();
+            })
             .map(({ date, available, note }) => ({ date, available, note }))
             .sort((a, b) => {
               return new Date(a.date) - new Date(b.date);

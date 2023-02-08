@@ -131,13 +131,6 @@ export const Test = (props) => {
       <h1>Test</h1>
       <h1>{user && user.id}</h1>
 
-      {/* {result &&
-        Object.keys(result)
-          .filter(date => new Date(date) < new Date())
-          .map((date) => {
-            console.log('after', new Date(date));
-          })} */}
-
       {Object.keys(result).map((date) => (
         <div
           className="bg-white rounded-md p-6 shadow-md mb-4 text-left 2xl:w-1/3 lg:w-2/3 w-full m-auto"
@@ -148,10 +141,14 @@ export const Test = (props) => {
           {Object.keys(result[date]).map((skillName) => (
             <div className="mb-1 flex flex-row" key={skillName}>
               <p className="font-bold w-20 text-right mr-4">{skillName} </p>
-              {/* <p>{result[date][skillName].join(", ")}</p> */}
               {result[date][skillName].map((i) => {
                 return (
-                  <p className="bg-gray-200 mr-2 px-2 rounded-md hover:bg-teal-400 hover:text-white hover:font-bold">
+                  <p
+                    onClick={() => {
+                      console.log(i);
+                    }}
+                    className="bg-gray-200 mr-2 px-2 rounded-md hover:bg-teal-400 hover:text-white hover:font-bold"
+                  >
                     {i}
                   </p>
                 );
