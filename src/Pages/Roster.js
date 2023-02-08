@@ -93,14 +93,6 @@ export const Roster = (props) => {
     fetchSkills();
   }, []);
 
-  // useEffect(() => {
-  //   if (userInfo && skills && availables) {
-  //     console.log("userInfo", userInfo);
-  //     console.log("skills", skills);
-  //     console.log("availables", availables);
-  //   }
-  // }, [userInfo, skills, availables]);
-
   useEffect(() => {
     if (availables.length && userInfo.length && skills.length) {
       const result = {};
@@ -120,19 +112,24 @@ export const Roster = (props) => {
         });
       });
 
-      setResult(result);
+      const filteredResult = {};
+      const currentDate = new Date();
+
+      for (const date in result) {
+        if (new Date(date) > currentDate) {
+          filteredResult[date] = result[date];
+        }
+      }
+
+      // console.log(filteredResult);
+
+      setResult(filteredResult);
     }
   }, [availables, userInfo, skills]);
+
   return (
     <div className="md:w-2/3 w-full m-auto ">
       <h1>{user && user.id}</h1>
-
-      {result &&
-        Object.keys(result)
-          .filter(date => new Date(date) < new Date())
-          .map((date) => {
-            console.log('blue', new Date(date));
-          })}
 
       {Object.keys(result).map((date) => (
         <div
@@ -144,10 +141,14 @@ export const Roster = (props) => {
           {Object.keys(result[date]).map((skillName) => (
             <div className="mb-1 flex flex-row" key={skillName}>
               <p className="font-bold w-20 text-right mr-4">{skillName} </p>
-              {/* <p>{result[date][skillName].join(", ")}</p> */}
               {result[date][skillName].map((i) => {
                 return (
-                  <p className="bg-gray-200 mr-2 px-2 rounded-md hover:bg-teal-400 hover:text-white hover:font-bold">
+                  <p
+                    onClick={() => {
+                      console.log(i);
+                    }}
+                    className="bg-gray-200 mr-2 px-2 rounded-md hover:bg-teal-400 hover:text-white hover:font-bold"
+                  >
                     {i}
                   </p>
                 );
