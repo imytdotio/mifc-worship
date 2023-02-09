@@ -153,7 +153,7 @@ export const Roster = (props) => {
         .map((available) => (
           <div
             key={available.date}
-            className="bg-white rounded-md p-6 shadow-md mb-4 2xl:w-1/3 lg:w-2/3 w-full m-auto"
+            className="bg-white rounded-md p-6 shadow-md mb-4 2xl:w-1/3 lg:w-2/3 w-full m-auto duration-200"
           >
             <h3 className="font-bold mb-4 text-center">{available.date}</h3>
             {skills.map((skill) => (
@@ -211,7 +211,7 @@ export const Roster = (props) => {
                               return (
                                 <div class="group relative justify-center inline-block">
                                   <span className="ml-1">°</span>
-                                  <span class="absolute top-10 scale-0 rounded bg-gray-800 p-2 text-xs text-white group-hover:scale-100">
+                                  <span class="absolute -top-8 scale-0 rounded bg-gray-800 p-2 text-xs text-white group-hover:scale-100">
                                     {note.note}
                                   </span>
                                 </div>

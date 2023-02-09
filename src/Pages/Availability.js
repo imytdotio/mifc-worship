@@ -124,7 +124,6 @@ export const Availability = (props) => {
   };
 
   const setNote = async (uid, date, note) => {
-    console.log("checking");
     const { data, error } = await supabase
       .from("availability")
       .update({ note: note })
@@ -138,7 +137,7 @@ export const Availability = (props) => {
     }
 
     if (data) {
-      console.log(data);
+      // console.log(data);
     }
   };
   //   const [tempString, setTempString] = useState("");

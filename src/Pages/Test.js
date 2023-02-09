@@ -207,11 +207,11 @@ export const Test = (props) => {
                               note.date == available.date &&
                               note.uid == user.uid
                             ) {
-                              console.log(note.date);
+                              // console.log(note.date);
                               return (
                                 <div class="group relative justify-center inline-block">
                                   <span className="ml-1">°</span>
-                                  <span class="absolute top-10 scale-0 rounded bg-gray-800 p-2 text-xs text-white group-hover:scale-100">
+                                  <span class="absolute -top-10 scale-0 rounded bg-gray-800 p-2 text-xs text-white group-hover:scale-100">
                                     {note.note}
                                   </span>
                                 </div>
@@ -229,7 +229,10 @@ export const Test = (props) => {
             {/* Show All / Selected Button */}
             <button
               className="mx-auto my-2 bg-teal-300 px-4 rounded-md duration-200 hover:shadow-md"
-              onClick={() => setShowSelectedOnly(!showSelectedOnly)}
+              onClick={() => {
+                console.log(available.date);
+                setShowSelectedOnly(!showSelectedOnly);
+              }}
             >
               {showSelectedOnly ? "Show All" : "Confirm"}
             </button>
