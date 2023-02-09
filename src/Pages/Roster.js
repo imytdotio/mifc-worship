@@ -122,7 +122,7 @@ export const Roster = (props) => {
   return (
     <div className="md:w-2/3 w-full m-auto ">
       {/* <h1>Test</h1> */}
-      <h1>{user && user.id}</h1>
+      {/* <h1>{user && user.id}</h1> */}
 
       {availables
         .filter((available) => {

@@ -77,7 +77,7 @@ export const SignOut = () => {
 
   return (
     <div className="m-auto">
-      <p>{user && user.id}</p>
+      {/* <p>{user && user.id}</p> */}
       <Button onClick={() => signOut()} className="w-full md:w-1/3">
         Sign out
       </Button>
