@@ -13,6 +13,8 @@ export const Test = (props) => {
   const [userInfo, setUserInfo] = useState([]);
   const [skills, setSkills] = useState([]);
 
+  const [userNote, setUserNote] = useState([]);
+
   const [selectedNickname, setSelectedNickname] = useState([]);
   const [showSelectedOnly, setShowSelectedOnly] = useState(false);
 
@@ -36,21 +38,35 @@ export const Test = (props) => {
     setShowSelectedOnly(false);
   };
 
-  const handleShowSelectedOnlyClick = () => {
-    setShowSelectedOnly(!showSelectedOnly);
-  };
-
   const fetchAvailables = async () => {
     const { data, error } = await supabase
       .from("availability")
-      .select("date, uid")
+      .select("date, uid, note")
       .order("date", { ascending: true })
       .eq("available", true);
     if (error) {
       console.log(error);
       return;
     }
+
+    // if (data) {
+    //   console.log(data);
+    //   const newy = data.reduce((acc, obj) => {
+    //     const existing = acc.find((x) => x.date === obj.date);
+    // if (existing) {
+    //   existing.uid.push({ user: obj.uid, note: obj.note });
+    // } else {
+    //   acc.push({ date: obj.date, uid: [{ uid: obj.uid, note: obj.note }] });
+    // }
+    // return acc;
+    //   }, []);
+
+    //   console.log(newy);
+    //   setAvailables(newy);
+    // }
+
     if (data) {
+      console.log(data);
       const newy = data.reduce((acc, obj) => {
         const existing = acc.find((x) => x.date === obj.date);
         if (existing) {
@@ -60,6 +76,9 @@ export const Test = (props) => {
         }
         return acc;
       }, []);
+      console.log(newy);
+
+      setUserNote(data.filter((obj) => obj.note !== ""));
       setAvailables(newy);
     }
   };
@@ -74,7 +93,6 @@ export const Test = (props) => {
     }
     if (data) {
       setUserInfo(data);
-      console.log("data", data);
     }
   };
 
@@ -109,7 +127,6 @@ export const Test = (props) => {
         }, [])
         .sort((a, b) => a.skill > b.skill);
       setSkills(trimmedSkill);
-      console.log(trimmedSkill);
     }
   };
 
@@ -118,6 +135,10 @@ export const Test = (props) => {
     fetchAvailables();
     fetchSkills();
   }, []);
+
+  useEffect(() => {
+    console.log(userNote);
+  }, [userNote]);
 
   return (
     <div className="md:w-2/3 w-full m-auto ">
@@ -179,6 +200,24 @@ export const Test = (props) => {
                           }
                         >
                           {user.nickname}
+
+                          {/* Note */}
+                          {userNote.map((note) => {
+                            if (
+                              note.date == available.date &&
+                              note.uid == user.uid
+                            ) {
+                              console.log(note.date);
+                              return (
+                                <div class="group relative justify-center inline-block">
+                                  <span className="ml-1">°</span>
+                                  <span class="absolute top-10 scale-0 rounded bg-gray-800 p-2 text-xs text-white group-hover:scale-100">
+                                    {note.note}
+                                  </span>
+                                </div>
+                              );
+                            }
+                          })}
                         </button>
                       ) : (
                         ""

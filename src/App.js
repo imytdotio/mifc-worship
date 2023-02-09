@@ -29,6 +29,7 @@ function App() {
           <Route path="/availability" element={<Availability />} />
           <Route path="/roster" element={<Roster />} />
           <Route path="/t" element={<Test />} />
+          <Route path="/test" element={<Test />} />
         </Routes>
       </BrowserRouter>
     </div>
