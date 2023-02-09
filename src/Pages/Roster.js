@@ -136,7 +136,7 @@ export const Roster = (props) => {
           >
             <h3 className="font-bold mb-4 text-center">{available.date}</h3>
             {skills.map((skill) => (
-              <div key={skill.skill} className="flex flex-row mb-1">
+              <div key={skill.skill} className="flex flex-row mb-1 text-left gap-2">
                 <p className="font-bold w-20 text-right mr-4">
                   {skill.skillName}
                 </p>
@@ -167,15 +167,15 @@ export const Roster = (props) => {
                           }
                           className={
                             showSelectedOnly
-                              ? "bg-gray-200 mr-2 px-2 rounded-md"
+                              ? "bg-gray-200 mr-2 px-2 rounded-md mb-1 text-left"
                               : selectedNickname.some(
                                   (item) =>
                                     item.uid === user.uid &&
                                     item.date === available.date &&
                                     item.skill === skill.skill
                                 )
-                              ? "bg-teal-300 mr-2 px-2 rounded-md"
-                              : "bg-gray-200 mr-2 px-2 rounded-md"
+                              ? "bg-teal-300 mr-2 px-2 rounded-md mb-1 text-left"
+                              : "bg-gray-200 mr-2 px-2 rounded-md mb-1 text-left"
                           }
                         >
                           {user.nickname}

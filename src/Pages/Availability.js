@@ -67,6 +67,7 @@ const Datey = (props) => {
           props.setNote(e.target.value);
         }}
         value={input}
+        placeholder='note'
       />
     </div>
   );
