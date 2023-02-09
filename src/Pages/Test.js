@@ -12,7 +12,27 @@ export const Test = (props) => {
   const [availables, setAvailables] = useState([]);
   const [userInfo, setUserInfo] = useState([]);
   const [skills, setSkills] = useState([]);
-  const [result, setResult] = useState({});
+
+  const [selectedNickname, setSelectedNickname] = useState([]);
+
+  const handleNicknameClick = (uid, date, skill) => {
+    const selected = { uid, date, skill };
+    let updatedSelectedNickname;
+
+    if (
+      selectedNickname.some(
+        (item) => item.uid === uid && item.date === date && item.skill === skill
+      )
+    ) {
+      updatedSelectedNickname = selectedNickname.filter(
+        (item) => item.uid !== uid || item.date !== date || item.skill !== skill
+      );
+    } else {
+      updatedSelectedNickname = [...selectedNickname, selected];
+    }
+
+    setSelectedNickname(updatedSelectedNickname);
+  };
 
   const fetchAvailables = async () => {
     const { data, error } = await supabase
@@ -93,71 +113,64 @@ export const Test = (props) => {
     fetchSkills();
   }, []);
 
-  useEffect(() => {
-    if (availables.length && userInfo.length && skills.length) {
-      const result = {};
-
-      availables.forEach((available) => {
-        result[available.date] = {};
-        available.uid.forEach((uid) => {
-          const user = userInfo.find((userInfo) => userInfo.uid === uid);
-          skills.forEach((skill) => {
-            if (skill.uid.includes(uid)) {
-              if (!result[available.date][skill.skillName]) {
-                result[available.date][skill.skillName] = [];
-              }
-              result[available.date][skill.skillName].push(user.nickname);
-            }
-          });
-        });
-      });
-
-      const filteredResult = {};
-      const currentDate = new Date();
-
-      for (const date in result) {
-        if (new Date(date) > currentDate) {
-          filteredResult[date] = result[date];
-        }
-      }
-
-      // console.log(filteredResult);
-
-      setResult(filteredResult);
-    }
-  }, [availables, userInfo, skills]);
-  
   return (
     <div className="md:w-2/3 w-full m-auto ">
-      <h1>Test</h1>
+      {/* <h1>Test</h1> */}
       <h1>{user && user.id}</h1>
 
-      {Object.keys(result).map((date) => (
-        <div
-          className="bg-white rounded-md p-6 shadow-md mb-4 text-left 2xl:w-1/3 lg:w-2/3 w-full m-auto"
-          key={date}
-        >
-          <h1 className="font-bold mb-4 text-center">{date}</h1>
-
-          {Object.keys(result[date]).map((skillName) => (
-            <div className="mb-1 flex flex-row" key={skillName}>
-              <p className="font-bold w-20 text-right mr-4">{skillName} </p>
-              {result[date][skillName].map((i) => {
-                return (
-                  <p
-                    onClick={() => {
-                      console.log(i);
-                    }}
-                    className="bg-gray-200 mr-2 px-2 rounded-md hover:bg-teal-400 hover:text-white hover:font-bold"
-                  >
-                    {i}
-                  </p>
-                );
-              })}
-            </div>
-          ))}
-        </div>
-      ))}
+      {availables
+        .filter((available) => {
+          const availableDate = new Date(available.date);
+          return availableDate >= new Date();
+        })
+        .map((available) => (
+          <div
+            key={available.date}
+            className="bg-white rounded-md p-6 shadow-md mb-4 text-left 2xl:w-1/3 lg:w-2/3 w-full m-auto"
+          >
+            <h3 className="font-bold mb-4 text-center">{available.date}</h3>
+            {skills.map((skill) => (
+              <div key={skill.skill} className="flex flex-row mb-1">
+                <p className="font-bold w-20 text-right mr-4">
+                  {skill.skillName}
+                </p>
+                <p>
+                  {skill.uid
+                    .filter((uid) => available.uid.includes(uid))
+                    .map((uid) => {
+                      const user = userInfo.find((user) => user.uid === uid);
+                      return user ? (
+                        <button
+                          key={user.uid}
+                          onClick={() =>
+                            handleNicknameClick(
+                              user.uid,
+                              available.date,
+                              skill.skill
+                            )
+                          }
+                          className={
+                            selectedNickname.some(
+                              (item) =>
+                                item.uid === user.uid &&
+                                item.date === available.date &&
+                                item.skill === skill.skill
+                            )
+                              ? "bg-teal-300 mr-2 px-2 rounded-md"
+                              : "bg-gray-200 mr-2 px-2 rounded-md"
+                          }
+                        >
+                          {user.nickname}
+                        </button>
+                      ) : (
+                        ""
+                      );
+                    })}
+                </p>
+              </div>
+            ))}
+          </div>
+        ))}
     </div>
   );
 };

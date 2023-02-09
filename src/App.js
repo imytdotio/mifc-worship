@@ -28,7 +28,7 @@ function App() {
           <Route path="/createuser" element={<CreateUser />} />
           <Route path="/availability" element={<Availability />} />
           <Route path="/roster" element={<Roster />} />
-          <Route path="/test" element={<Test />} />
+          <Route path="/t" element={<Test />} />
         </Routes>
       </BrowserRouter>
     </div>
