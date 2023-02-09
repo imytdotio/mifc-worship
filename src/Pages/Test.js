@@ -16,6 +16,7 @@ export const Test = (props) => {
   const [userNote, setUserNote] = useState([]);
 
   const [selectedNickname, setSelectedNickname] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
   const [showSelectedOnly, setShowSelectedOnly] = useState(false);
 
   const handleNicknameClick = (uid, date, skill) => {
@@ -150,6 +151,16 @@ export const Test = (props) => {
           const availableDate = new Date(available.date);
           return availableDate >= new Date();
         })
+        .filter((available) => {
+          if (selectedDate) {
+            console.log(selectedDate);
+            console.log(available);
+            return available.date === selectedDate;
+            // return available;
+          } else {
+            return available;
+          }
+        })
         .map((available) => (
           <div
             key={available.date}
@@ -230,7 +241,11 @@ export const Test = (props) => {
             <button
               className="mx-auto my-2 bg-teal-300 px-4 rounded-md duration-200 hover:shadow-md"
               onClick={() => {
-                console.log(available.date);
+                if (selectedDate === null) {
+                  setSelectedDate(available.date);
+                } else {
+                  setSelectedDate(null);
+                }
                 setShowSelectedOnly(!showSelectedOnly);
               }}
             >

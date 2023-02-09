@@ -16,6 +16,7 @@ export const Roster = (props) => {
   const [userNote, setUserNote] = useState([]);
 
   const [selectedNickname, setSelectedNickname] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
   const [showSelectedOnly, setShowSelectedOnly] = useState(false);
 
   const handleNicknameClick = (uid, date, skill) => {
@@ -150,10 +151,20 @@ export const Roster = (props) => {
           const availableDate = new Date(available.date);
           return availableDate >= new Date();
         })
+        .filter((available) => {
+          if (selectedDate) {
+            console.log(selectedDate);
+            console.log(available);
+            return available.date === selectedDate;
+            // return available;
+          } else {
+            return available;
+          }
+        })
         .map((available) => (
           <div
             key={available.date}
-            className="bg-white rounded-md p-6 shadow-md mb-4 2xl:w-1/3 lg:w-2/3 w-full m-auto duration-200"
+            className="bg-white rounded-md p-6 shadow-md mb-4 2xl:w-1/3 lg:w-2/3 w-full m-auto"
           >
             <h3 className="font-bold mb-4 text-center">{available.date}</h3>
             {skills.map((skill) => (
@@ -207,11 +218,11 @@ export const Roster = (props) => {
                               note.date == available.date &&
                               note.uid == user.uid
                             ) {
-                              console.log(note.date);
+                              // console.log(note.date);
                               return (
                                 <div class="group relative justify-center inline-block">
                                   <span className="ml-1">°</span>
-                                  <span class="absolute -top-8 scale-0 rounded bg-gray-800 p-2 text-xs text-white group-hover:scale-100">
+                                  <span class="absolute -top-10 scale-0 rounded bg-gray-800 p-2 text-xs text-white group-hover:scale-100">
                                     {note.note}
                                   </span>
                                 </div>
@@ -229,7 +240,14 @@ export const Roster = (props) => {
             {/* Show All / Selected Button */}
             <button
               className="mx-auto my-2 bg-teal-300 px-4 rounded-md duration-200 hover:shadow-md"
-              onClick={() => setShowSelectedOnly(!showSelectedOnly)}
+              onClick={() => {
+                if (selectedDate === null) {
+                  setSelectedDate(available.date);
+                } else {
+                  setSelectedDate(null);
+                }
+                setShowSelectedOnly(!showSelectedOnly);
+              }}
             >
               {showSelectedOnly ? "Show All" : "Confirm"}
             </button>
