@@ -14,6 +14,7 @@ export const Test = (props) => {
   const [skills, setSkills] = useState([]);
 
   const [selectedNickname, setSelectedNickname] = useState([]);
+  const [showSelectedOnly, setShowSelectedOnly] = useState(false);
 
   const handleNicknameClick = (uid, date, skill) => {
     const selected = { uid, date, skill };
@@ -32,6 +33,11 @@ export const Test = (props) => {
     }
 
     setSelectedNickname(updatedSelectedNickname);
+    setShowSelectedOnly(false);
+  };
+
+  const handleShowSelectedOnlyClick = () => {
+    setShowSelectedOnly(!showSelectedOnly);
   };
 
   const fetchAvailables = async () => {
@@ -126,7 +132,7 @@ export const Test = (props) => {
         .map((available) => (
           <div
             key={available.date}
-            className="bg-white rounded-md p-6 shadow-md mb-4 text-left 2xl:w-1/3 lg:w-2/3 w-full m-auto"
+            className="bg-white rounded-md p-6 shadow-md mb-4 2xl:w-1/3 lg:w-2/3 w-full m-auto"
           >
             <h3 className="font-bold mb-4 text-center">{available.date}</h3>
             {skills.map((skill) => (
@@ -136,7 +142,17 @@ export const Test = (props) => {
                 </p>
                 <p>
                   {skill.uid
-                    .filter((uid) => available.uid.includes(uid))
+                    .filter((uid) => {
+                      if (showSelectedOnly) {
+                        return selectedNickname.some(
+                          (item) =>
+                            item.uid === uid &&
+                            item.date === available.date &&
+                            item.skill === skill.skill
+                        );
+                      }
+                      return available.uid.includes(uid);
+                    })
                     .map((uid) => {
                       const user = userInfo.find((user) => user.uid === uid);
                       return user ? (
@@ -150,12 +166,14 @@ export const Test = (props) => {
                             )
                           }
                           className={
-                            selectedNickname.some(
-                              (item) =>
-                                item.uid === user.uid &&
-                                item.date === available.date &&
-                                item.skill === skill.skill
-                            )
+                            showSelectedOnly
+                              ? "bg-gray-200 mr-2 px-2 rounded-md"
+                              : selectedNickname.some(
+                                  (item) =>
+                                    item.uid === user.uid &&
+                                    item.date === available.date &&
+                                    item.skill === skill.skill
+                                )
                               ? "bg-teal-300 mr-2 px-2 rounded-md"
                               : "bg-gray-200 mr-2 px-2 rounded-md"
                           }
@@ -169,6 +187,13 @@ export const Test = (props) => {
                 </p>
               </div>
             ))}
+            {/* Show All / Selected Button */}
+            <button
+              className="mx-auto my-2 bg-teal-300 px-4 rounded-md duration-200 hover:shadow-md"
+              onClick={() => setShowSelectedOnly(!showSelectedOnly)}
+            >
+              {showSelectedOnly ? "Show All" : "Confirm"}
+            </button>
           </div>
         ))}
     </div>
