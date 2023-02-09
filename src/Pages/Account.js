@@ -19,7 +19,7 @@ export const Account = (props) => {
     if (user === null) {
       navigate("/");
     }
-  }, []);
+  }, [user]);
 
   return (
     <>
