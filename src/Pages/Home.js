@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { SignedIn, SignIn, SignOut } from "../Componenets/Auth";
+import Notification from "../Componenets/Notification";
 import { supabase } from "../Config/supabase";
 import { AuthContext } from "../Context/AuthContext";
 import { Login } from "./Login";
@@ -45,7 +46,7 @@ export const Home = (props) => {
           className="my-4 md:w-2/3 lg:w-1/3 mx-auto"
         />
       ) : (
-        ""
+        <>{/* <Notification /> */}</>
       )}
       <div className="grid grid-cols-2 gap-4 w-full md:w-2/3 lg:w-1/3 mx-auto">
         {user && (
