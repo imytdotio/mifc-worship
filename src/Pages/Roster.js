@@ -169,10 +169,10 @@ export const Roster = (props) => {
             <h3 className="font-bold mb-4 text-center">{available.date}</h3>
             {skills.map((skill) => (
               <div key={skill.skill} className="flex flex-row mb-1">
-                <p className="font-bold w-20 text-right mr-4">
+                <p className="font-bold md:w-20 text-right md:mr-4 mr-2 md:basis-0 basis-1/3 ">
                   {skill.skillName}
                 </p>
-                <p>
+                <p className="text-left basis-2/3 md:basis-0">
                   {skill.uid
                     .filter((uid) => {
                       if (showSelectedOnly) {
@@ -207,7 +207,7 @@ export const Roster = (props) => {
                                     item.skill === skill.skill
                                 )
                               ? "bg-teal-300 mr-2 px-2 rounded-md"
-                              : "bg-gray-200 mr-2 px-2 rounded-md"
+                              : "bg-gray-200 mr-2 px-2 rounded-md md:mb-0 mb-1"
                           }
                         >
                           {user.nickname}
