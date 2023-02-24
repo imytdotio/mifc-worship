@@ -21,12 +21,12 @@ export const Nav = () => {
   }, [navbarOpen]);
 
   const navStyle =
-    "text-right px-3 py-2 text-xs uppercase font-bold leading-snug text-slate-800 hover:bg-teal-400/25 rounded-full";
+    "text-right px-3 py-2 text-xs uppercase font-bold leading-snug text-slate-800 hover:bg-teal-400/25 rounded-md";
   return (
     <>
       <nav
         ref={navRef}
-        className="relative bg-white rounded-3xl shadow-lg mb-12 flex flex-wrap items-center justify-between md:px-2 px-0 py-3 md:w-1/2 w-full mx-auto"
+        className="relative flex flex-wrap items-center justify-between md:px-2 px-0 py-3 mb-3 md:w-2/3 w-full mx-auto"
       >
         <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
           <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">

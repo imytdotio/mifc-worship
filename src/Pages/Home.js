@@ -38,22 +38,24 @@ export const Home = (props) => {
     console.log(user);
   }
   return (
-    <div>
+    <div className="bg-white rounded-3xl shadow-lg md:w-2/3 w-full m-auto p-8">
       {!user ? (
         <Linktree
           link="/login"
           title="🔐 Sign In"
-          className="my-4 md:w-2/3 lg:w-1/3 mx-auto"
+          className="my-4 md:w-1/2 lg:w-1/2 mx-auto"
         />
       ) : (
         <>{/* <Notification /> */}</>
       )}
-      <div className="grid grid-cols-2 gap-4 w-full md:w-2/3 lg:w-1/3 mx-auto">
-        {user && (
+      <div className="grid grid-cols-2 gap-4 w-full md:w-1/2 lg:w-1/2 mx-auto">
+        {user ? (
           <>
             <Linktree link="/account" title="🥷 Account" />
             <Linktree link="/availability" title="✅ Availability" />
           </>
+        ) : (
+          ""
         )}
         <a
           href="https://drive.google.com/drive/folders/1jfp-DfO8Dw3DsNfScjE6ajLNk57OeJzZ"
