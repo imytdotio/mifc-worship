@@ -58,13 +58,13 @@ export const Home = (props) => {
           ""
         )}
         <a
-          href="https://drive.google.com/drive/folders/1jfp-DfO8Dw3DsNfScjE6ajLNk57OeJzZ"
+          // href="https://drive.google.com/drive/folders/1jfp-DfO8Dw3DsNfScjE6ajLNk57OeJzZ"
           target="_blank"
         >
           <button
             className={`h-24 text-lg block border-2 border-teal-400 w-full mx-auto rounded-xl hover:shadow-md duration-200 ${props.className}`}
           >
-            📂 Google Drive
+            📂 Google Drive (Disabled for security, login to unlock)
           </button>
         </a>
         <Linktree link="/roster" title="🙋‍♂️ Roster" />
