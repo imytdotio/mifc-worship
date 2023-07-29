@@ -3,11 +3,6 @@ import { AuthContext } from "../Context/AuthContext";
 import { supabase } from "../Config/supabase";
 import { CheckBlock, Input } from "./Components";
 
-/**
- * @author
- * @function EditUser
- **/
-
 export const EditUser = (props) => {
   const { user } = useContext(AuthContext);
 
@@ -23,7 +18,6 @@ export const EditUser = (props) => {
           nickname: action.payload.nickname,
           phoneNumber: action.payload.phoneNumber,
         };
-
       default:
         return state;
     }
@@ -38,13 +32,10 @@ export const EditUser = (props) => {
     const { data, error } = await supabase
       .from("members_info")
       .update({ nickname: state.nickname })
-      .eq("uid", uid)
-      .select();
+      .eq("uid", uid);
     if (error) {
       console.log(error);
       return;
-    }
-    if (data) {
     }
   };
 
@@ -52,13 +43,10 @@ export const EditUser = (props) => {
     const { data, error } = await supabase
       .from("members_info")
       .update({ phoneNumber: state.phoneNumber })
-      .eq("uid", uid)
-      .select();
+      .eq("uid", uid);
     if (error) {
       console.log(error);
       return;
-    }
-    if (data) {
     }
   };
 
@@ -86,58 +74,66 @@ export const EditUser = (props) => {
     fetchInitData();
   }, []);
 
-  const [skillNames, setSkillNames] = useState();
-  const [skills, setSkills] = useState(null);
+  const [skills, setSkills] = useState();
+  const [userSkills, setUserSkills] = useState(null);
 
-  const fetchSkillNames = async () => {
-    const { data, error } = await supabase.from("skills").select();
+  const fetchSkills = async () => {
+    const { data, error } = await supabase
+      .from("skills")
+      .select()
+      .order("skill_order", { ascending: true });
+    if (error) {
+      console.log(error);
+      return;
+    }
     if (data) {
-      setSkillNames(data);
+      setSkills(data);
     }
   };
 
-  const findName = (id) =>
-    skillNames.filter((skill) => skill.id === id)[0].name;
-
-  const fetchSkills = async (uid) => {
+  const fetchUserSkills = async (uid) => {
     const { data, error } = await supabase
       .from("profile")
       .select()
-      .eq("uid", props.uid)
+      .eq("uid", uid)
       .order("skill", { ascending: true });
     if (error) {
       console.log(error);
       return;
     }
     if (data) {
-      setSkills(data.filter(skill => skill.skill !== 0));
+      const skillMap = data.reduce((map, skill) => {
+        map[skill.skill] = skill.haveSkill;
+        return map;
+      }, {});
+      setUserSkills(skillMap);
     }
   };
-  
+
   useEffect(() => {
-    fetchSkillNames();
-    fetchSkills(props.uid);
+    fetchSkills();
+    fetchUserSkills(user.id);
   }, []);
 
   const addSkill = async (uid, skillId, haveSkill) => {
     const { data, error } = await supabase
       .from("profile")
       .update({ haveSkill: !haveSkill })
-      .eq("uid", props.uid)
+      .eq("uid", uid)
       .eq("skill", skillId);
 
     if (!error) {
-      setSkills((prevSkills) =>
-        prevSkills.map((skill) =>
-          skill.skill === skillId ? { ...skill, haveSkill: !haveSkill } : skill
-        )
-      );
+      setUserSkills((prevSkills) => ({
+        ...prevSkills,
+        [skillId]: !haveSkill,
+      }));
+    } else {
+      console.log(error);
     }
   };
 
   return (
     <div className="py-4 px-2 md:w-2/5 w-full m-auto bg-white rounded-xl shadow-lg my-4">
-      {/* md:w-2/5 = 2/3*2/3 */}
       <div className="flex flex-col">
         <Input
           placeholder="平時啲人點叫你？"
@@ -164,15 +160,17 @@ export const EditUser = (props) => {
           className="m-auto"
         />
       </div>
+      
       {skills &&
         skills.map((skill) => {
+          const userHasSkill = userSkills ? userSkills[skill.id] : false;
           return (
             <CheckBlock
-              label={skillNames ? findName(skill.skill) : ""}
-              key={skill.skill}
-              element={skill.haveSkill}
+              label={skill.name}
+              key={skill.id}
+              element={userHasSkill}
               onClick={() => {
-                addSkill(props.uid, skill.skill, skill.haveSkill);
+                addSkill(user.id, skill.id, userHasSkill);
               }}
             />
           );
