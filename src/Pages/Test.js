@@ -41,7 +41,7 @@ export const Test = (props) => {
 
   const fetchAvailables = async () => {
     const { data, error } = await supabase
-      .from("availability")
+      .from("worship-availability")
       .select("date, uid, note")
       .order("date", { ascending: true })
       .eq("available", true);
