@@ -70,7 +70,12 @@ export const EditUser = (props) => {
         });
       }
     };
+    const fetchData = async () => {
+      await fetchSkills();
+      await fetchUserSkills(user.id);
+    };
 
+    fetchData();
     fetchInitData();
   }, []);
 
@@ -116,13 +121,48 @@ export const EditUser = (props) => {
   }, []);
 
   const addSkill = async (uid, skillId, haveSkill) => {
+    const insertRow = async () => {
+      const { data, error } = await supabase
+        .from("profile")
+        .insert([{ uid, skill: skillId, haveSkill: true }])
+        .select();
+      if (error) {
+        console.log(error);
+        return;
+      } else {
+        console.log(data);
+      }
+    };
+
+    const removeRow = async () => {
+      const { error } = await supabase
+        .from("profile")
+        .delete()
+        .eq("uid", uid)
+        .eq("skill", skillId);
+    };
+
     const { data, error } = await supabase
       .from("profile")
-      .update({ haveSkill: !haveSkill })
+      .select()
       .eq("uid", uid)
       .eq("skill", skillId);
 
+    if (error || data.length === 0) {
+      console.log("insert");
+      insertRow();
+    } else {
+      console.log("remove", skillId);
+      removeRow();
+    }
+    // const { data, error } = await supabase
+    //   .from("profile")
+    //   .update({ haveSkill: !haveSkill })
+    //   .eq("uid", uid)
+    //   .eq("skill", skillId);
+
     if (!error) {
+      console.log("data", data);
       setUserSkills((prevSkills) => ({
         ...prevSkills,
         [skillId]: !haveSkill,
@@ -160,7 +200,7 @@ export const EditUser = (props) => {
           className="m-auto"
         />
       </div>
-      
+
       {skills &&
         skills.map((skill) => {
           const userHasSkill = userSkills ? userSkills[skill.id] : false;
@@ -170,6 +210,7 @@ export const EditUser = (props) => {
               key={skill.id}
               element={userHasSkill}
               onClick={() => {
+                console.log("u");
                 addSkill(user.id, skill.id, userHasSkill);
               }}
             />
