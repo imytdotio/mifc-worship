@@ -43,28 +43,11 @@ export const Roster = (props) => {
     const { data, error } = await supabase
       .from("availability")
       .select("date, uid, note")
-      .order("date", { ascending: true })
-      .eq("available", true);
+      .order("date", { ascending: true });
     if (error) {
       console.log(error);
       return;
     }
-
-    // if (data) {
-    //   console.log(data);
-    //   const newy = data.reduce((acc, obj) => {
-    //     const existing = acc.find((x) => x.date === obj.date);
-    // if (existing) {
-    //   existing.uid.push({ user: obj.uid, note: obj.note });
-    // } else {
-    //   acc.push({ date: obj.date, uid: [{ uid: obj.uid, note: obj.note }] });
-    // }
-    // return acc;
-    //   }, []);
-
-    //   console.log(newy);
-    //   setAvailables(newy);
-    // }
 
     if (data) {
       console.log(data);
@@ -82,7 +65,8 @@ export const Roster = (props) => {
       setUserNote(data.filter((obj) => obj.note !== ""));
       setAvailables(newy);
     }
-  };
+};
+
 
   const fetchUserInfo = async () => {
     const { data, error } = await supabase

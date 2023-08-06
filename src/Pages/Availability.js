@@ -67,7 +67,7 @@ const Datey = (props) => {
           props.setNote(e.target.value);
         }}
         value={input}
-        placeholder='note'
+        placeholder="note"
       />
     </div>
   );
@@ -79,67 +79,122 @@ export const Availability = (props) => {
 
   useEffect(() => {
     const fetchAvailability = async () => {
+      const { data: availabilityData, error: availabilityError } =
+        await supabase.from("availability").select().eq("uid", user.id);
+
+      const { data: worshipWeeksData, error: worshipWeeksError } =
+        await supabase.from("worship_weeks_2023").select();
+
+      if (availabilityError || worshipWeeksError) {
+        console.log(availabilityError, worshipWeeksError);
+        return;
+      }
+
+      const combinedData = worshipWeeksData.map((week) => {
+        const availability = availabilityData.find(
+          (a) =>
+            new Date(a.date).toDateString() ===
+            new Date(week.date).toDateString()
+        );
+        return {
+          date: week.date,
+          available: !!availability,
+          note: availability?.note || "",
+        };
+      });
+
+      setDates(combinedData);
+    };
+
+    fetchAvailability();
+  }, []);
+
+  const rowExists = (date) => {
+    return dates.some(d => new Date(d.date).toDateString() === new Date(date).toDateString() && d.available);
+  };
+
+  const insertRow = async (uid, date, note = "") => {
+    const { data, error } = await supabase
+      .from("availability")
+      .insert([{ uid, date, note }]);
+    
+    if (error) {
+      console.log(error);
+      return;
+    }
+
+    // Update local state if needed
+    setDates(prevDates => {
+      const updatedDates = [...prevDates];
+      const index = updatedDates.findIndex(d => new Date(d.date).toDateString() === new Date(date).toDateString());
+      if (index !== -1) {
+        updatedDates[index].available = true;
+        updatedDates[index].note = note;
+      }
+      return updatedDates;
+    });
+  };
+
+
+  const removeRow = async (uid, date) => {
+    const { data, error } = await supabase
+      .from("availability")
+      .delete()
+      .eq("uid", uid)
+      .eq("date", date);
+
+    if (error) {
+      console.log(error);
+      return;
+    }
+
+    // Update local state if needed
+    setDates(prevDates => {
+      const updatedDates = [...prevDates];
+      const index = updatedDates.findIndex(d => new Date(d.date).toDateString() === new Date(date).toDateString());
+      if (index !== -1) {
+        updatedDates[index].available = false;
+      }
+      return updatedDates;
+    });
+  };
+
+  const setCheck = async (uid, date) => {
+    if (rowExists(date)) {
+      removeRow(uid, date);
+    } else {
+      insertRow(uid, date);
+    }
+  };
+
+  const setNote = async (uid, date, note) => {
+    if (rowExists(date)) {
       const { data, error } = await supabase
         .from("availability")
-        .select()
-        .eq("uid", user.id);
+        .update({ note: note })
+        .eq("uid", uid)
+        .eq("date", date)
+        .select();
 
       if (error) {
         console.log(error);
         return;
       }
 
-      if (data) {
-        setDates(
-          data
-            .filter(({ date }) => {
-              return new Date(date) > new Date();
-            })
-            .map(({ date, available, note }) => ({ date, available, note }))
-            .sort((a, b) => {
-              return new Date(a.date) - new Date(b.date);
-            })
-        );
-      }
-    };
-
-    fetchAvailability();
-  }, []);
-
-  const setCheck = async (uid, date, availability) => {
-    const { data, error } = await supabase
-      .from("availability")
-      .update({ available: !availability })
-      .eq("uid", uid)
-      .eq("date", date)
-      .select();
-    if (error) {
-      console.log(error);
-      return;
-    }
-
-    if (data) {
-      //   console.log(data);
+      // Update local state if needed
+      setDates(prevDates => {
+        const updatedDates = [...prevDates];
+        const index = updatedDates.findIndex(d => new Date(d.date).toDateString() === new Date(date).toDateString());
+        if (index !== -1) {
+          updatedDates[index].note = note;
+        }
+        return updatedDates;
+      });
+    } else {
+      insertRow(uid, date, note);
     }
   };
 
-  const setNote = async (uid, date, note) => {
-    const { data, error } = await supabase
-      .from("availability")
-      .update({ note: note })
-      .eq("uid", uid)
-      .eq("date", date)
-      .select();
-
-    if (error) {
-      console.log(error);
-      return;
-    }
-
-    if (data) {
-      // console.log(data);
-    }
-  };
   //   const [tempString, setTempString] = useState("");
 
   return (

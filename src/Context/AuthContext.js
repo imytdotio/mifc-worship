@@ -25,7 +25,7 @@ export const AuthProvider = (props) => {
     if (data) {
       console.log("Signed Up");
       setError(null);
-      insertSaturdays(data.user.id);
+      // insertSaturdays(data.user.id);
       fetch18Skills(data.user.id);
       createInfo(data.user.id)
     }
