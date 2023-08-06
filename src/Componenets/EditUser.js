@@ -207,19 +207,21 @@ export const EditUser = (props) => {
       </div>
 
       {skills &&
-        skills.map((skill) => {
-          const userHasSkill = userSkills ? userSkills[skill.id] : false;
-          return (
-            <CheckBlock
-              label={skill.name}
-              key={skill.id}
-              element={userHasSkill}
-              onClick={() => {
-                addSkill(user.id, skill.id);
-              }}
-            />
-          );
-        })}
+        skills
+          .filter((skill) => skill.id !== 0)
+          .map((skill) => {
+            const userHasSkill = userSkills ? userSkills[skill.id] : false;
+            return (
+              <CheckBlock
+                label={skill.name}
+                key={skill.id}
+                element={userHasSkill}
+                onClick={() => {
+                  addSkill(user.id, skill.id);
+                }}
+              />
+            );
+          })}
     </div>
   );
 };
