@@ -60,6 +60,19 @@ export const EditUser = (props) => {
         console.log(error);
         return;
       }
+      if (!data.length) {
+        console.log('no user found')
+        const { data, error } = await supabase
+          .from("members_info")
+          .insert([{ uid: user.id }])
+          .select();
+        if (error) {
+          console.log(error);
+          return;
+        } else {
+          console.log(data);
+        }
+      }
       if (data) {
         dispatchFn({
           type: "SET_INITIAL_VALUES",
