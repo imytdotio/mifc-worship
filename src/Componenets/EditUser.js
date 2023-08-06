@@ -61,7 +61,7 @@ export const EditUser = (props) => {
         return;
       }
       if (!data.length) {
-        console.log('no user found')
+        console.log("no user found");
         const { data, error } = await supabase
           .from("members_info")
           .insert([{ uid: user.id }])
@@ -112,7 +112,7 @@ export const EditUser = (props) => {
   const fetchUserSkills = async (uid) => {
     const { data, error } = await supabase
       .from("profile")
-      .select()
+      .select("skill")
       .eq("uid", uid)
       .order("skill", { ascending: true });
     if (error) {
@@ -121,7 +121,7 @@ export const EditUser = (props) => {
     }
     if (data) {
       const skillMap = data.reduce((map, skill) => {
-        map[skill.skill] = skill.haveSkill;
+        map[skill.skill] = true;
         return map;
       }, {});
       setUserSkills(skillMap);
@@ -133,55 +133,47 @@ export const EditUser = (props) => {
     fetchUserSkills(user.id);
   }, []);
 
-  const addSkill = async (uid, skillId, haveSkill) => {
-    const insertRow = async () => {
-      const { data, error } = await supabase
-        .from("profile")
-        .insert([{ uid, skill: skillId, haveSkill: true }])
-        .select();
-      if (error) {
-        console.log(error);
-        return;
-      } else {
-        console.log(data);
-      }
-    };
-
-    const removeRow = async () => {
-      const { error } = await supabase
-        .from("profile")
-        .delete()
-        .eq("uid", uid)
-        .eq("skill", skillId);
-    };
-
-    const { data, error } = await supabase
+  const addSkill = async (uid, skillId) => {
+    const { data: existingSkill, error: fetchError } = await supabase
       .from("profile")
       .select()
       .eq("uid", uid)
       .eq("skill", skillId);
 
-    if (error || data.length === 0) {
-      console.log("insert");
-      insertRow();
-    } else {
-      console.log("remove", skillId);
-      removeRow();
+    if (fetchError) {
+      console.log(fetchError);
+      return;
     }
-    // const { data, error } = await supabase
-    //   .from("profile")
-    //   .update({ haveSkill: !haveSkill })
-    //   .eq("uid", uid)
-    //   .eq("skill", skillId);
+    if (existingSkill.length) {
+      // If skill exists, remove it
+      const { error: deleteError } = await supabase
+        .from("profile")
+        .delete()
+        .eq("uid", uid)
+        .eq("skill", skillId);
 
-    if (!error) {
-      console.log("data", data);
-      setUserSkills((prevSkills) => ({
-        ...prevSkills,
-        [skillId]: !haveSkill,
-      }));
+      if (deleteError) {
+        console.log(deleteError);
+      } else {
+        setUserSkills((prevSkills) => ({
+          ...prevSkills,
+          [skillId]: false,
+        }));
+      }
     } else {
-      console.log(error);
+      // If skill doesn't exist, add it
+      const { error: insertError } = await supabase
+        .from("profile")
+        .insert([{ uid, skill: skillId }]);
+
+      if (insertError) {
+        console.log(insertError);
+      } else {
+        setUserSkills((prevSkills) => ({
+          ...prevSkills,
+          [skillId]: true,
+        }));
+      }
     }
   };
 
@@ -223,8 +215,7 @@ export const EditUser = (props) => {
               key={skill.id}
               element={userHasSkill}
               onClick={() => {
-                console.log("u");
-                addSkill(user.id, skill.id, userHasSkill);
+                addSkill(user.id, skill.id);
               }}
             />
           );

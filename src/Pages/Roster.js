@@ -105,7 +105,6 @@ export const Roster = (props) => {
       skill, 
       skills(name)`
       )
-      .eq("haveSkill", true);
 
     if (error) {
       console.log(error);
