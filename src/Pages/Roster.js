@@ -65,8 +65,7 @@ export const Roster = (props) => {
       setUserNote(data.filter((obj) => obj.note !== ""));
       setAvailables(newy);
     }
-};
-
+  };
 
   const fetchUserInfo = async () => {
     const { data, error } = await supabase
@@ -82,13 +81,11 @@ export const Roster = (props) => {
   };
 
   const fetchSkills = async () => {
-    const { data, error } = await supabase
-      .from("profile")
-      .select(
-        `uid, 
+    const { data, error } = await supabase.from("profile").select(
+      `uid, 
       skill, 
       skills(name)`
-      )
+    );
 
     if (error) {
       console.log(error);
@@ -150,76 +147,78 @@ export const Roster = (props) => {
             className="bg-white rounded-md p-6 shadow-md mb-4 2xl:w-1/3 lg:w-2/3 w-full m-auto"
           >
             <h3 className="font-bold mb-4 text-center">{available.date}</h3>
-            {skills.map((skill) => (
-              <div key={skill.skill} className="flex flex-row mb-1">
-                <p className="font-bold md:w-20 text-right md:mr-4 mr-2 basis-1/3 ">
-                  {skill.skillName}
-                </p>
-                <p className="text-left basis-2/3">
-                  {skill.uid
-                    .filter((uid) => {
-                      if (showSelectedOnly) {
-                        return selectedNickname.some(
-                          (item) =>
-                            item.uid === uid &&
-                            item.date === available.date &&
-                            item.skill === skill.skill
-                        );
-                      }
-                      return available.uid.includes(uid);
-                    })
-                    .map((uid) => {
-                      const user = userInfo.find((user) => user.uid === uid);
-                      return user ? (
-                        <button
-                          key={user.uid}
-                          onClick={() =>
-                            handleNicknameClick(
-                              user.uid,
-                              available.date,
-                              skill.skill
-                            )
-                          }
-                          className={
-                            showSelectedOnly
-                              ? "bg-gray-200 mr-2 px-2 rounded-md"
-                              : selectedNickname.some(
-                                  (item) =>
-                                    item.uid === user.uid &&
-                                    item.date === available.date &&
-                                    item.skill === skill.skill
-                                )
-                              ? "bg-teal-300 mr-2 px-2 rounded-md"
-                              : "bg-gray-200 mr-2 px-2 rounded-md md:mb-0 mb-1"
-                          }
-                        >
-                          {user.nickname}
-
-                          {/* Note */}
-                          {userNote.map((note) => {
-                            if (
-                              note.date == available.date &&
-                              note.uid == user.uid
-                            ) {
-                              // console.log(note.date);
-                              return (
-                                <div class="group relative justify-center inline-block">
-                                  <span className="ml-1">°</span>
-                                  <span class="absolute -top-10 scale-0 rounded bg-gray-800 p-2 text-xs text-white group-hover:scale-100">
-                                    {note.note}
-                                  </span>
-                                </div>
-                              );
+            {skills
+              .filter((skill) => skill.skill != 0)
+              .map((skill) => (
+                <div key={skill.skill} className="flex flex-row mb-1">
+                  <p className="font-bold md:w-20 text-right md:mr-4 mr-2 basis-1/3 ">
+                    {skill.skillName}
+                  </p>
+                  <p className="text-left basis-2/3">
+                    {skill.uid
+                      .filter((uid) => {
+                        if (showSelectedOnly) {
+                          return selectedNickname.some(
+                            (item) =>
+                              item.uid === uid &&
+                              item.date === available.date &&
+                              item.skill === skill.skill
+                          );
+                        }
+                        return available.uid.includes(uid);
+                      })
+                      .map((uid) => {
+                        const user = userInfo.find((user) => user.uid === uid);
+                        return user ? (
+                          <button
+                            key={user.uid}
+                            onClick={() =>
+                              handleNicknameClick(
+                                user.uid,
+                                available.date,
+                                skill.skill
+                              )
                             }
-                          })}
-                        </button>
-                      ) : (
-                        ""
-                      );
-                    })}
-                </p>
-              </div>
-            ))}
+                            className={
+                              showSelectedOnly
+                                ? "bg-gray-200 mr-2 px-2 rounded-md"
+                                : selectedNickname.some(
+                                    (item) =>
+                                      item.uid === user.uid &&
+                                      item.date === available.date &&
+                                      item.skill === skill.skill
+                                  )
+                                ? "bg-teal-300 mr-2 px-2 rounded-md"
+                                : "bg-gray-200 mr-2 px-2 rounded-md md:mb-0 mb-1"
+                            }
+                          >
+                            {user.nickname}
+
+                            {/* Note */}
+                            {userNote.map((note) => {
+                              if (
+                                note.date == available.date &&
+                                note.uid == user.uid
+                              ) {
+                                // console.log(note.date);
+                                return (
+                                  <div class="group relative justify-center inline-block">
+                                    <span className="ml-1">°</span>
+                                    <span class="absolute -top-10 scale-0 rounded bg-gray-800 p-2 text-xs text-white group-hover:scale-100">
+                                      {note.note}
+                                    </span>
+                                  </div>
+                                );
+                              }
+                            })}
+                          </button>
+                        ) : (
+                          ""
+                        );
+                      })}
+                  </p>
+                </div>
+              ))}
             {/* Show All / Selected Button */}
             <button
               className="mx-auto my-2 bg-teal-300 px-4 rounded-md duration-200 hover:shadow-md"
