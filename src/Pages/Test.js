@@ -295,7 +295,36 @@ export const Test = (props) => {
         <p>Loading...</p>
       ) : (
         <>
+          <div className="mb-2">
+            <p className="font-bold">Select Month:</p>
+            {months.map((month) => (
+              <button
+                className="px-1 mx-1 bg-gray-200 rounded-md"
+                onClick={() => {
+                  if (month + 1 < 10) {
+                    setSelectedMonth(`0${month + 1}`);
+                  } else {
+                    setSelectedMonth(month + 1);
+                  }
+                }}
+              >
+                {month + 1}
+              </button>
+            ))}
+          </div>
+
           {selectedMonth ? (
+            processed.map((data) => (
+              <RosterCard
+                key={data.date}
+                date={data.date}
+                skillNames={skillNames}
+                availables={availables}
+                userSkills={userSkills}
+                userInfo={userInfo}
+              />
+            ))
+          ) : (
             <>
               <p>Please select date first</p>
               {/* -------- Date Selector -------- */}
@@ -314,17 +343,6 @@ export const Test = (props) => {
                 </button>
               ))}
             </>
-          ) : (
-            processed.map((data) => (
-              <RosterCard
-                key={data.date}
-                date={data.date}
-                skillNames={skillNames}
-                availables={availables}
-                userSkills={userSkills}
-                userInfo={userInfo}
-              />
-            ))
           )}
         </>
       )}
