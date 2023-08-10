@@ -72,17 +72,38 @@ const fetchSaturdays = async () => {
 };
 
 const NameButton = (props) => {
+  const { uid, date, skill, nickname, list, setList } = props;
+
+  // Check if the current combination exists in the list
+  const isActive = list.some(
+    (item) => item.uid === uid && item.date === date && item.skill === skill
+  );
+
   return (
     <span
-      className="cursor-pointer mx-1 px-1 bg-gray-200 rounded-md"
+      className={`cursor-pointer mx-1 px-1 ${
+        isActive ? "bg-teal-400" : "bg-gray-200"
+      } rounded-md`}
       onClick={() => {
-        console.log(props.uid);
-        console.log(props.date);
-        console.log(props.skill);
-        props.onClick();
+        console.log(uid, date, skill);
+        // Toggle the combination in the list state
+        if (isActive) {
+          setList((prevList) =>
+            prevList.filter(
+              (item) =>
+                !(
+                  item.uid === uid &&
+                  item.date === date &&
+                  item.skill === skill
+                )
+            )
+          );
+        } else {
+          setList((prevList) => [...prevList, { uid, date, skill }]);
+        }
       }}
     >
-      {props.nickname}
+      {nickname}
     </span>
   );
 };
@@ -143,28 +164,14 @@ const RosterCard = (props) => {
                     (user) => user.nickname === nickname
                   )?.uid;
                   return (
-                    // <span
-                    //   key={uid}
-                    //   onClick={() =>
-                    //     handleUserClick(uid, props.date, skillName.id)
-                    //   }
-                    // >
-                    //   <span>{nickname}</span>
-                    //   {idx !== usersForSkill.length - 1 ? ", " : ""}
-                    // </span>
                     <NameButton
                       uid={uid}
                       date={props.date}
                       skill={skillName.id}
                       nickname={nickname}
+                      list={list}
+                      setList={setList}
                       key={uid}
-                      onClick={() => {
-                        setList([
-                          ...list,
-                          { uid, date: props.date, skill: skillName.id },
-                        ]);
-                        console.log(list);
-                      }}
                     />
                   );
                 })}
@@ -172,6 +179,9 @@ const RosterCard = (props) => {
             </div>
           );
         })}
+      <button className="bg-gray-200 px-2 py-1 rounded-md hover:shadow-md">
+        Submit
+      </button>
     </div>
   );
 };
