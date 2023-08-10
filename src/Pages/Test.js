@@ -111,6 +111,7 @@ const NameButton = (props) => {
 const RosterCard = (props) => {
   const { availables, userInfo, userSkills, skillNames } = props;
   const [list, setList] = useState([]);
+  const [showList, setShowList] = useState(false);
 
   // Find users available on the given date
   const usersAvailableOnDate = (date) => {
@@ -140,12 +141,28 @@ const RosterCard = (props) => {
     // Find intersection of both arrays
     const commonUids = availableUids.filter((uid) => skillUids.includes(uid));
 
+    if (showList) {
+      // Filter by users in the list for the given date and skill
+      return commonUids
+        .filter((uid) =>
+          list.some(
+            (item) =>
+              item.uid === uid && item.date === date && item.skill === skillId
+          )
+        )
+        .map((uid) => findUserNickname(uid))
+        .filter(Boolean);
+    }
+
     return commonUids.map((uid) => findUserNickname(uid)).filter(Boolean);
   };
 
   return (
     <div className="bg-white rounded-md shadow-md py-4 px-8 md:w-1/2 w-full m-auto mb-4">
-      <p className="font-bold">{props.date}</p>
+      <div className="flex">
+        <p className="font-bold flex-1">{props.date}</p>
+        <button onClick={() => setShowList(!showList)}>👁️</button>
+      </div>
       {skillNames
         .filter((skillName) => skillName.id !== 0)
         .sort((a, b) => a.skill_order - b.skill_order)
@@ -179,9 +196,10 @@ const RosterCard = (props) => {
             </div>
           );
         })}
-      <button className="bg-gray-200 px-2 py-1 rounded-md hover:shadow-md">
+
+      {/* <button className="bg-gray-200 px-2 py-1 rounded-md hover:shadow-md my-2">
         Submit
-      </button>
+      </button> */}
     </div>
   );
 };

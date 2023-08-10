@@ -58,9 +58,9 @@ export const Nav = () => {
               <NavLink to="/roster" className={navStyle}>
                 Roster
               </NavLink>
-              {/* <NavLink to="/test" className={navStyle}>
+              <NavLink to="/test" className={navStyle}>
                 Test
-              </NavLink> */}
+              </NavLink>
 
               {user ? (
                 <>

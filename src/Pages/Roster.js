@@ -2,239 +2,378 @@ import React, { useContext, useEffect, useState } from "react";
 import { supabase } from "../Config/supabase";
 import { AuthContext } from "../Context/AuthContext";
 
-/**
- * @author
- * @function Test
- **/
+const fetchAvailables = async (selectedMonth) => {
+  const { data, error } = await supabase
+    .from("availability")
+    .select("date, uid, note")
+    .like("date", `%-${selectedMonth}-%`)
+    .order("date", { ascending: true });
+  if (error) {
+    console.log(error);
+    return;
+  }
+  if (data) {
+    console.log(data);
+    return data;
+  }
+};
 
-export const Roster = (props) => {
-  const { user } = useContext(AuthContext);
-  const [availables, setAvailables] = useState([]);
-  const [userInfo, setUserInfo] = useState([]);
-  const [skills, setSkills] = useState([]);
+const fetchUserInfo = async () => {
+  const { data, error } = await supabase
+    .from("members_info")
+    .select("uid, nickname");
+  if (error) {
+    console.log(error);
+    return;
+  }
+  if (data) {
+    return data;
+  }
+};
 
-  const [userNote, setUserNote] = useState([]);
+const fetchUserSkills = async () => {
+  const { data, error } = await supabase.from("profile").select("uid, skill");
 
-  const [selectedNickname, setSelectedNickname] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [showSelectedOnly, setShowSelectedOnly] = useState(false);
+  if (error) {
+    console.log(error);
+    return;
+  }
+  if (data) {
+    return data;
+  }
+};
 
-  const handleNicknameClick = (uid, date, skill) => {
-    const selected = { uid, date, skill };
-    let updatedSelectedNickname;
+const fetchSkillNames = async () => {
+  const { data, error } = await supabase
+    .from("skills")
+    .select("id, name, skill_order");
 
-    if (
-      selectedNickname.some(
-        (item) => item.uid === uid && item.date === date && item.skill === skill
-      )
-    ) {
-      updatedSelectedNickname = selectedNickname.filter(
-        (item) => item.uid !== uid || item.date !== date || item.skill !== skill
-      );
-    } else {
-      updatedSelectedNickname = [...selectedNickname, selected];
-    }
+  if (error) {
+    console.log(error);
+    return;
+  }
+  if (data) {
+    return data;
+  }
+};
 
-    setSelectedNickname(updatedSelectedNickname);
-    setShowSelectedOnly(false);
-  };
+const fetchSaturdays = async () => {
+  const { data, error } = await supabase
+    .from("worship_weeks_2023")
+    .select("date");
 
-  const fetchAvailables = async () => {
-    const { data, error } = await supabase
-      .from("availability")
-      .select("date, uid, note")
-      .order("date", { ascending: true });
-    if (error) {
-      console.log(error);
-      return;
-    }
+  if (error) {
+    console.log(error);
+    return;
+  }
+  if (data) {
+    return data.map((obj) => obj.date);
+  }
+};
 
-    if (data) {
-      console.log(data);
-      const newy = data.reduce((acc, obj) => {
-        const existing = acc.find((x) => x.date === obj.date);
-        if (existing) {
-          existing.uid.push(obj.uid);
+const NameButton = (props) => {
+  const { uid, date, skill, nickname, list, setList } = props;
+
+  // Check if the current combination exists in the list
+  const isActive = list.some(
+    (item) => item.uid === uid && item.date === date && item.skill === skill
+  );
+
+  return (
+    <span
+      className={`cursor-pointer mx-1 px-1 ${
+        isActive ? "bg-teal-400" : "bg-gray-200"
+      } rounded-md`}
+      onClick={() => {
+        console.log(uid, date, skill);
+        // Toggle the combination in the list state
+        if (isActive) {
+          setList((prevList) =>
+            prevList.filter(
+              (item) =>
+                !(
+                  item.uid === uid &&
+                  item.date === date &&
+                  item.skill === skill
+                )
+            )
+          );
         } else {
-          acc.push({ date: obj.date, uid: [obj.uid] });
+          setList((prevList) => [...prevList, { uid, date, skill }]);
         }
-        return acc;
-      }, []);
-      console.log(newy);
+      }}
+    >
+      {nickname}
+    </span>
+  );
+};
 
-      setUserNote(data.filter((obj) => obj.note !== ""));
-      setAvailables(newy);
-    }
+const RosterCard = (props) => {
+  const { availables, userInfo, userSkills, skillNames } = props;
+  const [list, setList] = useState([]);
+  const [showList, setShowList] = useState(false);
+
+  // Find users available on the given date
+  const usersAvailableOnDate = (date) => {
+    return availables
+      .filter((available) => available.date === date)
+      .map((av) => av.uid);
   };
 
-  const fetchUserInfo = async () => {
-    const { data, error } = await supabase
-      .from("members_info")
-      .select("uid, nickname");
-    if (error) {
-      console.log(error);
-      return;
-    }
-    if (data) {
-      setUserInfo(data);
-    }
+  // Find the nickname of a user given their uid
+  const findUserNickname = (uid) => {
+    const user = userInfo.find((user) => user.uid === uid);
+    return user ? user.nickname : null;
   };
 
-  const fetchSkills = async () => {
-    const { data, error } = await supabase.from("profile").select(
-      `uid, 
-      skill, 
-      skills(name)`
+  // Find users with a specific skill
+  const usersWithSkill = (skillId) => {
+    return userSkills
+      .filter((skill) => skill.skill === skillId)
+      .map((sk) => sk.uid);
+  };
+
+  // Find users available on a date with a specific skill
+  const usersAvailableWithSkill = (date, skillId) => {
+    const availableUids = usersAvailableOnDate(date);
+    const skillUids = usersWithSkill(skillId);
+
+    // Find intersection of both arrays
+    const commonUids = availableUids.filter((uid) => skillUids.includes(uid));
+
+    if (showList) {
+      // Filter by users in the list for the given date and skill
+      return commonUids
+        .filter((uid) =>
+          list.some(
+            (item) =>
+              item.uid === uid && item.date === date && item.skill === skillId
+          )
+        )
+        .map((uid) => findUserNickname(uid))
+        .filter(Boolean);
+    }
+
+    return commonUids.map((uid) => findUserNickname(uid)).filter(Boolean);
+  };
+
+  return (
+    <div className="bg-white rounded-md shadow-md py-4 px-8 md:w-1/2 w-full m-auto mb-4">
+      <div className="flex">
+        <p className="font-bold flex-1">{props.date}</p>
+        <button onClick={() => setShowList(!showList)}>👁️</button>
+      </div>
+      {skillNames
+        .filter((skillName) => skillName.id !== 0)
+        .sort((a, b) => a.skill_order - b.skill_order)
+        .map((skillName) => {
+          const usersForSkill = usersAvailableWithSkill(
+            props.date,
+            skillName.id
+          );
+
+          return (
+            <div key={skillName.id}>
+              <p className="text-left">
+                {skillName.name}:
+                {usersForSkill.map((nickname, idx) => {
+                  const uid = userInfo.find(
+                    (user) => user.nickname === nickname
+                  )?.uid;
+                  return (
+                    <NameButton
+                      uid={uid}
+                      date={props.date}
+                      skill={skillName.id}
+                      nickname={nickname}
+                      list={list}
+                      setList={setList}
+                      key={uid}
+                    />
+                  );
+                })}
+              </p>
+            </div>
+          );
+        })}
+
+      {/* <button className="bg-gray-200 px-2 py-1 rounded-md hover:shadow-md my-2">
+        Submit
+      </button> */}
+    </div>
+  );
+};
+
+const preprocessData = (availables, userInfo, userSkills, skillNames) => {
+  // Group availables by date
+  const groupedByDate = availables.reduce((acc, available) => {
+    if (!acc[available.date]) {
+      acc[available.date] = [];
+    }
+    acc[available.date].push(available.uid);
+    return acc;
+  }, {});
+
+  const processedData = Object.keys(groupedByDate).map((date) => {
+    const usersAvailable = userInfo.filter((user) =>
+      groupedByDate[date].includes(user.uid)
     );
 
-    if (error) {
-      console.log(error);
-      return;
-    }
-    if (data) {
-      const trimmedSkill = data
-        .reduce((acc, curr) => {
-          const existingSkill = acc.find((s) => s.skill === curr.skill);
-          if (existingSkill) {
-            existingSkill.uid.push(curr.uid);
-          } else {
-            acc.push({
-              skill: curr.skill,
-              skillName: curr.skills.name,
-              uid: [curr.uid],
-            });
-          }
-          return acc;
-        }, [])
-        .sort((a, b) => a.skill > b.skill);
-      setSkills(trimmedSkill);
-    }
-  };
+    const skillsForUsers = usersAvailable.map((user) => {
+      const skills = userSkills.filter((skill) => skill.uid === user.uid);
+      return {
+        ...user,
+        skills: skills
+          .map((skill) => {
+            const skillNameObj = skillNames.find((s) => s.id === skill.skill);
+            return skillNameObj ? skillNameObj.name : null;
+          })
+          .filter(Boolean),
+      };
+    });
+
+    return {
+      date: date,
+      users: skillsForUsers,
+    };
+  });
+
+  return processedData;
+};
+
+export const Roster = (props) => {
+  // const { user } = useContext(AuthContext);
+  // const id = user.id;
+  // console.log(id);
+
+  const [loading, setLoading] = useState(true);
+  const [selectedMonth, setSelectedMonth] = useState(null);
+  const [months, setMonths] = useState([]);
+  const [availables, setAvailables] = useState([]);
+  const [userInfo, setUserInfo] = useState([]);
+  const [userSkills, setUserSkills] = useState([]);
+  const [skillNames, setSkillNames] = useState([]);
+  const [processed, setProcessed] = useState([]);
 
   useEffect(() => {
-    fetchUserInfo();
-    fetchAvailables();
-    fetchSkills();
+    function handleFetchedDates(data) {
+      // Extract months from the data
+      const months = [
+        ...new Set(data.map((date) => new Date(date).getMonth())),
+      ];
+
+      // Set the selectedMonth to be the month of the first date
+      const selectedMonth = new Date(data[0]).getMonth() + 1;
+      if (selectedMonth + 1 < 10) {
+        setSelectedMonth(`0${selectedMonth}`);
+      } else {
+        setSelectedMonth(selectedMonth);
+      }
+
+      setMonths(months);
+    }
+
+    fetchSaturdays().then((data) => {
+      console.log(data);
+      handleFetchedDates(data);
+    });
   }, []);
 
   useEffect(() => {
-    console.log(userNote);
-  }, [userNote]);
+    console.log(selectedMonth);
+    setLoading(true);
+    const fetchData = async () => {
+      const availData = await fetchAvailables(selectedMonth);
+      const userData = await fetchUserInfo();
+      const skillsData = await fetchUserSkills();
+      const skillNamesData = await fetchSkillNames();
+
+      setAvailables(availData);
+      setUserInfo(userData);
+      setUserSkills(skillsData);
+      setSkillNames(skillNamesData);
+      setLoading(false);
+    };
+
+    fetchData();
+    // if user is true, then set id = user.id
+  }, [selectedMonth]);
+
+  useEffect(() => {
+    if (
+      availables.length > 0 &&
+      userInfo.length > 0 &&
+      userSkills.length > 0 &&
+      skillNames.length > 0
+    ) {
+      console.log("all data is here");
+      const processedData = preprocessData(
+        availables,
+        userInfo,
+        userSkills,
+        skillNames
+      );
+      setProcessed(processedData);
+    }
+  }, [availables, userInfo, userSkills, skillNames]);
 
   return (
     <div className="md:w-2/3 w-full m-auto ">
-      {/* <h1>Test</h1> */}
-      {/* <h1>{user && user.id}</h1> */}
-
-      {availables
-        .filter((available) => {
-          const availableDate = new Date(available.date);
-          return availableDate >= new Date();
-        })
-        .filter((available) => {
-          if (selectedDate) {
-            console.log(selectedDate);
-            console.log(available);
-            return available.date === selectedDate;
-            // return available;
-          } else {
-            return available;
-          }
-        })
-        .map((available) => (
-          <div
-            key={available.date}
-            className="bg-white rounded-md p-6 shadow-md mb-4 2xl:w-1/3 lg:w-2/3 w-full m-auto"
-          >
-            <h3 className="font-bold mb-4 text-center">{available.date}</h3>
-            {skills
-              .filter((skill) => skill.skill != 0)
-              .map((skill) => (
-                <div key={skill.skill} className="flex flex-row mb-1">
-                  <p className="font-bold md:w-20 text-right md:mr-4 mr-2 basis-1/3 ">
-                    {skill.skillName}
-                  </p>
-                  <p className="text-left basis-2/3">
-                    {skill.uid
-                      .filter((uid) => {
-                        if (showSelectedOnly) {
-                          return selectedNickname.some(
-                            (item) =>
-                              item.uid === uid &&
-                              item.date === available.date &&
-                              item.skill === skill.skill
-                          );
-                        }
-                        return available.uid.includes(uid);
-                      })
-                      .map((uid) => {
-                        const user = userInfo.find((user) => user.uid === uid);
-                        return user ? (
-                          <button
-                            key={user.uid}
-                            onClick={() =>
-                              handleNicknameClick(
-                                user.uid,
-                                available.date,
-                                skill.skill
-                              )
-                            }
-                            className={
-                              showSelectedOnly
-                                ? "bg-gray-200 mr-2 px-2 rounded-md"
-                                : selectedNickname.some(
-                                    (item) =>
-                                      item.uid === user.uid &&
-                                      item.date === available.date &&
-                                      item.skill === skill.skill
-                                  )
-                                ? "bg-teal-300 mr-2 px-2 rounded-md"
-                                : "bg-gray-200 mr-2 px-2 rounded-md md:mb-0 mb-1"
-                            }
-                          >
-                            {user.nickname}
-
-                            {/* Note */}
-                            {userNote.map((note) => {
-                              if (
-                                note.date == available.date &&
-                                note.uid == user.uid
-                              ) {
-                                // console.log(note.date);
-                                return (
-                                  <div class="group relative justify-center inline-block">
-                                    <span className="ml-1">°</span>
-                                    <span class="absolute -top-10 scale-0 rounded bg-gray-800 p-2 text-xs text-white group-hover:scale-100">
-                                      {note.note}
-                                    </span>
-                                  </div>
-                                );
-                              }
-                            })}
-                          </button>
-                        ) : (
-                          ""
-                        );
-                      })}
-                  </p>
-                </div>
-              ))}
-            {/* Show All / Selected Button */}
-            <button
-              className="mx-auto my-2 bg-teal-300 px-4 rounded-md duration-200 hover:shadow-md"
-              onClick={() => {
-                if (selectedDate === null) {
-                  setSelectedDate(available.date);
-                } else {
-                  setSelectedDate(null);
-                }
-                setShowSelectedOnly(!showSelectedOnly);
-              }}
-            >
-              {showSelectedOnly ? "Show All" : "Confirm"}
-            </button>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          <div className="mb-2">
+            <p className="font-bold">Select Month:</p>
+            {months.map((month) => (
+              <button
+                className="px-1 mx-1 bg-gray-200 rounded-md"
+                onClick={() => {
+                  if (month + 1 < 10) {
+                    setSelectedMonth(`0${month + 1}`);
+                  } else {
+                    setSelectedMonth(month + 1);
+                  }
+                }}
+              >
+                {month + 1}
+              </button>
+            ))}
           </div>
-        ))}
+
+          {selectedMonth ? (
+            processed.map((data) => (
+              <RosterCard
+                key={data.date}
+                date={data.date}
+                skillNames={skillNames}
+                availables={availables}
+                userSkills={userSkills}
+                userInfo={userInfo}
+              />
+            ))
+          ) : (
+            <>
+              <p>Please select date first</p>
+              {/* -------- Date Selector -------- */}
+              {months.map((month) => (
+                <button
+                  className="px-1 mx-1 bg-gray-200 rounded-md"
+                  onClick={() => {
+                    if (month + 1 < 10) {
+                      setSelectedMonth(`0${month + 1}`);
+                    } else {
+                      setSelectedMonth(month + 1);
+                    }
+                  }}
+                >
+                  {month + 1}
+                </button>
+              ))}
+            </>
+          )}
+        </>
+      )}
     </div>
   );
 };
