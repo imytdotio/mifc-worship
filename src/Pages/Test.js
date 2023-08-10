@@ -2,16 +2,18 @@ import React, { useContext, useEffect, useState } from "react";
 import { supabase } from "../Config/supabase";
 import { AuthContext } from "../Context/AuthContext";
 
-const fetchAvailables = async () => {
+const fetchAvailables = async (selectedMonth) => {
   const { data, error } = await supabase
     .from("availability")
     .select("date, uid, note")
+    .like("date", `%-${selectedMonth}-%`)
     .order("date", { ascending: true });
   if (error) {
     console.log(error);
     return;
   }
   if (data) {
+    console.log(data);
     return data;
   }
 };
@@ -55,8 +57,39 @@ const fetchSkillNames = async () => {
   }
 };
 
+const fetchSaturdays = async () => {
+  const { data, error } = await supabase
+    .from("worship_weeks_2023")
+    .select("date");
+
+  if (error) {
+    console.log(error);
+    return;
+  }
+  if (data) {
+    return data.map((obj) => obj.date);
+  }
+};
+
+const NameButton = (props) => {
+  return (
+    <span
+      className="cursor-pointer mx-1 px-1 bg-gray-200 rounded-md"
+      onClick={() => {
+        console.log(props.uid);
+        console.log(props.date);
+        console.log(props.skill);
+        props.onClick();
+      }}
+    >
+      {props.nickname}
+    </span>
+  );
+};
+
 const RosterCard = (props) => {
   const { availables, userInfo, userSkills, skillNames } = props;
+  const [list, setList] = useState([]);
 
   // Find users available on the given date
   const usersAvailableOnDate = (date) => {
@@ -88,11 +121,6 @@ const RosterCard = (props) => {
 
     return commonUids.map((uid) => findUserNickname(uid)).filter(Boolean);
   };
-  const handleUserClick = (uid, date, skill) => {
-    console.log(uid);
-    console.log(date);
-    console.log(skill);
-  };
 
   return (
     <div className="bg-white rounded-md shadow-md py-4 px-8 md:w-1/2 w-full m-auto mb-4">
@@ -115,16 +143,29 @@ const RosterCard = (props) => {
                     (user) => user.nickname === nickname
                   )?.uid;
                   return (
-                    <span key={uid}>
-                      <span
-                        onClick={() =>
-                          handleUserClick(uid, props.date, skillName.id)
-                        }
-                      >
-                        {nickname}
-                      </span>
-                      {idx !== usersForSkill.length - 1 ? ", " : ""}
-                    </span>
+                    // <span
+                    //   key={uid}
+                    //   onClick={() =>
+                    //     handleUserClick(uid, props.date, skillName.id)
+                    //   }
+                    // >
+                    //   <span>{nickname}</span>
+                    //   {idx !== usersForSkill.length - 1 ? ", " : ""}
+                    // </span>
+                    <NameButton
+                      uid={uid}
+                      date={props.date}
+                      skill={skillName.id}
+                      nickname={nickname}
+                      key={uid}
+                      onClick={() => {
+                        setList([
+                          ...list,
+                          { uid, date: props.date, skill: skillName.id },
+                        ]);
+                        console.log(list);
+                      }}
+                    />
                   );
                 })}
               </p>
@@ -172,14 +213,14 @@ const preprocessData = (availables, userInfo, userSkills, skillNames) => {
   return processedData;
 };
 
-
-
 export const Test = (props) => {
   // const { user } = useContext(AuthContext);
   // const id = user.id;
   // console.log(id);
 
   const [loading, setLoading] = useState(true);
+  const [selectedMonth, setSelectedMonth] = useState(null);
+  const [months, setMonths] = useState([]);
   const [availables, setAvailables] = useState([]);
   const [userInfo, setUserInfo] = useState([]);
   const [userSkills, setUserSkills] = useState([]);
@@ -187,9 +228,34 @@ export const Test = (props) => {
   const [processed, setProcessed] = useState([]);
 
   useEffect(() => {
+    function handleFetchedDates(data) {
+      // Extract months from the data
+      const months = [
+        ...new Set(data.map((date) => new Date(date).getMonth())),
+      ];
+
+      // Set the selectedMonth to be the month of the first date
+      const selectedMonth = new Date(data[0]).getMonth() + 1;
+      if (selectedMonth + 1 < 10) {
+        setSelectedMonth(`0${selectedMonth}`);
+      } else {
+        setSelectedMonth(selectedMonth);
+      }
+
+      setMonths(months);
+    }
+
+    fetchSaturdays().then((data) => {
+      console.log(data);
+      handleFetchedDates(data);
+    });
+  }, []);
+
+  useEffect(() => {
+    console.log(selectedMonth);
     setLoading(true);
     const fetchData = async () => {
-      const availData = await fetchAvailables();
+      const availData = await fetchAvailables(selectedMonth);
       const userData = await fetchUserInfo();
       const skillsData = await fetchUserSkills();
       const skillNamesData = await fetchSkillNames();
@@ -203,7 +269,7 @@ export const Test = (props) => {
 
     fetchData();
     // if user is true, then set id = user.id
-  }, []);
+  }, [selectedMonth]);
 
   useEffect(() => {
     if (
@@ -229,17 +295,37 @@ export const Test = (props) => {
         <p>Loading...</p>
       ) : (
         <>
-          <p>Loaded</p>
-          {processed.map((data) => (
-            <RosterCard
-              key={data.date}
-              date={data.date}
-              skillNames={skillNames}
-              availables={availables}
-              userSkills={userSkills}
-              userInfo={userInfo}
-            />
-          ))}
+          {selectedMonth ? (
+            <>
+              <p>Please select date first</p>
+              {/* -------- Date Selector -------- */}
+              {months.map((month) => (
+                <button
+                  className="px-1 mx-1 bg-gray-200 rounded-md"
+                  onClick={() => {
+                    if (month + 1 < 10) {
+                      setSelectedMonth(`0${month + 1}`);
+                    } else {
+                      setSelectedMonth(month + 1);
+                    }
+                  }}
+                >
+                  {month + 1}
+                </button>
+              ))}
+            </>
+          ) : (
+            processed.map((data) => (
+              <RosterCard
+                key={data.date}
+                date={data.date}
+                skillNames={skillNames}
+                availables={availables}
+                userSkills={userSkills}
+                userInfo={userInfo}
+              />
+            ))
+          )}
         </>
       )}
     </div>
