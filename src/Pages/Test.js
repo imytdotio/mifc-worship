@@ -176,13 +176,44 @@ const RosterCard = (props) => {
     return commonUids.map((uid) => findUserNickname(uid)).filter(Boolean);
   };
 
-  const submitList = async () => {
-    const { data, error } = await supabase.from("roster").insert(list).select();
+  const deleteRows = async (rows) => {
+    const { error } = await supabase
+      .from("roster")
+      .delete()
+      .in(
+        "uid",
+        rows.map((row) => row.uid)
+      )
+      .in(
+        "date",
+        rows.map((row) => row.date)
+      )
+      .in(
+        "skill",
+        rows.map((row) => row.skill)
+      );
+
     if (error) {
-      console.log(error);
-    } else {
-      console.log(data);
+      console.error("Error deleting rows:", error);
     }
+  };
+
+  const insertRows = async (rows) => {
+    const { error } = await supabase.from("roster").insert(rows);
+
+    if (error) {
+      console.error("Error inserting rows:", error);
+    }
+  };
+
+  const submitList = async (planned, list) => {
+    // Determine rows to delete and insert
+    const toDelete = rowsToBeDeleted(planned, list);
+    const toInsert = rowsToBeInserted(planned, list);
+
+    // Delete and Insert operations
+    await deleteRows(toDelete);
+    await insertRows(toInsert);
   };
 
   return (
@@ -227,7 +258,9 @@ const RosterCard = (props) => {
 
       <button
         className="bg-gray-200 px-2 py-1 rounded-md hover:shadow-md my-2"
-        onClick={submitList}
+        onClick={() => {
+          submitList(roster, list);
+        }}
       >
         Submit
       </button>
@@ -270,6 +303,24 @@ const preprocessData = (availables, userInfo, userSkills, skillNames) => {
   });
 
   return processedData;
+};
+
+const rowsToBeDeleted = (planned, list) => {
+  return planned.filter(
+    (p) =>
+      !list.some(
+        (l) => l.uid === p.uid && l.date === p.date && l.skill === p.skill
+      )
+  );
+};
+
+const rowsToBeInserted = (planned, list) => {
+  return list.filter(
+    (l) =>
+      !planned.some(
+        (p) => p.uid === l.uid && p.date === l.date && p.skill === l.skill
+      )
+  );
 };
 
 export const Test = (props) => {
