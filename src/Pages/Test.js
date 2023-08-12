@@ -108,9 +108,28 @@ const NameButton = (props) => {
   );
 };
 
+const fetchPlanned = async (selectedMonth) => {
+  const { data, error } = await supabase
+    .from("roster")
+    .select("uid, date, skill")
+    .like("date", `%-${selectedMonth}-%`);
+
+  if (error) {
+    console.log(error);
+    return;
+  }
+  if (data) {
+    console.log("p", data);
+    return data;
+  }
+};
+
 const RosterCard = (props) => {
-  const { availables, userInfo, userSkills, skillNames } = props;
-  const [list, setList] = useState([]);
+  const { availables, userInfo, userSkills, skillNames, roster } = props;
+
+  const [list, setList] = useState(
+    roster.filter((item) => item.date === props.date)
+  );
   const [showList, setShowList] = useState(false);
 
   // Find users available on the given date
@@ -157,6 +176,15 @@ const RosterCard = (props) => {
     return commonUids.map((uid) => findUserNickname(uid)).filter(Boolean);
   };
 
+  const submitList = async () => {
+    const { data, error } = await supabase.from("roster").insert(list).select();
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(data);
+    }
+  };
+
   return (
     <div className="bg-white rounded-md shadow-md py-4 px-8 md:w-1/2 w-full m-auto mb-4">
       <div className="flex">
@@ -197,9 +225,12 @@ const RosterCard = (props) => {
           );
         })}
 
-      {/* <button className="bg-gray-200 px-2 py-1 rounded-md hover:shadow-md my-2">
+      <button
+        className="bg-gray-200 px-2 py-1 rounded-md hover:shadow-md my-2"
+        onClick={submitList}
+      >
         Submit
-      </button> */}
+      </button>
     </div>
   );
 };
@@ -253,6 +284,7 @@ export const Test = (props) => {
   const [userInfo, setUserInfo] = useState([]);
   const [userSkills, setUserSkills] = useState([]);
   const [skillNames, setSkillNames] = useState([]);
+  const [planned, setPlanned] = useState([]);
   const [processed, setProcessed] = useState([]);
 
   useEffect(() => {
@@ -287,11 +319,14 @@ export const Test = (props) => {
       const userData = await fetchUserInfo();
       const skillsData = await fetchUserSkills();
       const skillNamesData = await fetchSkillNames();
+      const plannedData = await fetchPlanned(selectedMonth);
 
       setAvailables(availData);
       setUserInfo(userData);
       setUserSkills(skillsData);
       setSkillNames(skillNamesData);
+      setPlanned(plannedData);
+
       setLoading(false);
     };
 
@@ -315,7 +350,7 @@ export const Test = (props) => {
       );
       setProcessed(processedData);
     }
-  }, [availables, userInfo, userSkills, skillNames]);
+  }, [availables, userInfo, userSkills, skillNames, planned]);
 
   return (
     <div className="md:w-2/3 w-full m-auto ">
@@ -350,6 +385,7 @@ export const Test = (props) => {
                 availables={availables}
                 userSkills={userSkills}
                 userInfo={userInfo}
+                roster={planned}
               />
             ))
           ) : (
