@@ -71,6 +71,22 @@ const fetchSaturdays = async () => {
   }
 };
 
+const fetchPlanned = async (selectedMonth) => {
+  const { data, error } = await supabase
+    .from("roster")
+    .select("uid, date, skill")
+    .like("date", `%-${selectedMonth}-%`);
+
+  if (error) {
+    console.log(error);
+    return;
+  }
+  if (data) {
+    console.log("p", data);
+    return data;
+  }
+};
+
 const NameButton = (props) => {
   const { uid, date, skill, nickname, list, setList } = props;
 
@@ -108,24 +124,9 @@ const NameButton = (props) => {
   );
 };
 
-const fetchPlanned = async (selectedMonth) => {
-  const { data, error } = await supabase
-    .from("roster")
-    .select("uid, date, skill")
-    .like("date", `%-${selectedMonth}-%`);
-
-  if (error) {
-    console.log(error);
-    return;
-  }
-  if (data) {
-    console.log("p", data);
-    return data;
-  }
-};
-
 const RosterCard = (props) => {
-  const { availables, userInfo, userSkills, skillNames, roster } = props;
+  const { availables, userInfo, userSkills, skillNames, roster, user } = props;
+  const [submitMessage, setSubmitMessage] = useState("");
 
   const [list, setList] = useState(
     roster.filter((item) => item.date === props.date)
@@ -216,6 +217,35 @@ const RosterCard = (props) => {
     await insertRows(toInsert);
   };
 
+  // Function to handle the submit click
+  const handleButtonClick = async (planned, list) => {
+    if (!user) {
+      setSubmitMessage("Login to submit.");
+      return;
+    }
+  
+    const isAdmin = userSkills.some(skill => skill.uid === user.id && skill.skill === 0);
+  
+    if (!isAdmin) {
+      setSubmitMessage("You are not an admin.");
+      return;
+    }
+  
+    // If we reached this point, the user is an admin
+    setSubmitMessage("Submitting...");
+  
+    // Determine rows to delete and insert
+    const toDelete = rowsToBeDeleted(planned, list);
+    const toInsert = rowsToBeInserted(planned, list);
+  
+    // Delete and Insert operations
+    await deleteRows(toDelete);
+    await insertRows(toInsert);
+  
+    setSubmitMessage("Submitted.");
+  };
+  
+
   return (
     <div className="bg-white rounded-md shadow-md py-4 px-8 md:w-1/2 w-full m-auto mb-4">
       <div className="flex">
@@ -258,12 +288,11 @@ const RosterCard = (props) => {
 
       <button
         className="bg-gray-200 px-2 py-1 rounded-md hover:shadow-md my-2"
-        onClick={() => {
-          submitList(roster, list);
-        }}
+        onClick={() => {handleButtonClick(roster, list)}}
       >
         Submit
       </button>
+      {submitMessage && <p>{submitMessage}</p>}
     </div>
   );
 };
@@ -324,9 +353,7 @@ const rowsToBeInserted = (planned, list) => {
 };
 
 export const Roster = (props) => {
-  // const { user } = useContext(AuthContext);
-  // const id = user.id;
-  // console.log(id);
+  const { user } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(null);
@@ -422,7 +449,7 @@ export const Roster = (props) => {
             ))}
           </div>
 
-          {selectedMonth ? (
+          {selectedMonth &&
             processed.map((data) => (
               <RosterCard
                 key={data.date}
@@ -432,28 +459,9 @@ export const Roster = (props) => {
                 userSkills={userSkills}
                 userInfo={userInfo}
                 roster={planned}
+                user={user}
               />
-            ))
-          ) : (
-            <>
-              <p>Please select date first</p>
-              {/* -------- Date Selector -------- */}
-              {months.map((month) => (
-                <button
-                  className="px-1 mx-1 bg-gray-200 rounded-md"
-                  onClick={() => {
-                    if (month + 1 < 10) {
-                      setSelectedMonth(`0${month + 1}`);
-                    } else {
-                      setSelectedMonth(month + 1);
-                    }
-                  }}
-                >
-                  {month + 1}
-                </button>
-              ))}
-            </>
-          )}
+            ))}
         </>
       )}
     </div>
