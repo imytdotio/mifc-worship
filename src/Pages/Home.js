@@ -5,6 +5,7 @@ import Notification from "../Componenets/Notification";
 import { supabase } from "../Config/supabase";
 import { AuthContext } from "../Context/AuthContext";
 import { Login } from "./Login";
+import { UpcomingRoster } from "./Roster";
 
 /**
  * @author
@@ -39,6 +40,7 @@ export const Home = (props) => {
   }
   return (
     <div className="bg-white rounded-3xl shadow-lg md:w-2/3 w-full m-auto p-8">
+      <UpcomingRoster />
       {!user ? (
         <Linktree
           link="/login"

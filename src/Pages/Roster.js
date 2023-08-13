@@ -472,3 +472,109 @@ export const Roster = (props) => {
     </div>
   );
 };
+
+export const UpcomingRoster = (props) => {
+  const { user } = useContext(AuthContext);
+
+  const [loading, setLoading] = useState(true);
+  const [availables, setAvailables] = useState([]);
+  const [userInfo, setUserInfo] = useState([]);
+  const [userSkills, setUserSkills] = useState([]);
+  const [skillNames, setSkillNames] = useState([]);
+  const [planned, setPlanned] = useState([]);
+  const [processed, setProcessed] = useState([]);
+  const [upcomingDate, setUpcomingDate] = useState(null);
+
+  useEffect(() => {
+    const findUpcomingSaturday = (dates) => {
+      const now = new Date();
+      for (let date of dates) {
+        if (new Date(date) > now) {
+          return date;
+        }
+      }
+      return null;
+    };
+
+    fetchSaturdays().then((dates) => {
+      const upcoming = findUpcomingSaturday(dates);
+      if (upcoming) {
+        setUpcomingDate(upcoming);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (upcomingDate) {
+      setLoading(true);
+      const selectedMonth = upcomingDate.split("-")[1];
+      Promise.all([
+        fetchAvailables(selectedMonth),
+        fetchUserInfo(),
+        fetchUserSkills(),
+        fetchSkillNames(),
+        fetchPlanned(selectedMonth),
+      ]).then(
+        ([availData, userData, skillsData, skillNamesData, plannedData]) => {
+          setAvailables(availData);
+          setUserInfo(userData);
+          setUserSkills(skillsData);
+          setSkillNames(skillNamesData);
+          setPlanned(plannedData);
+          setLoading(false);
+        }
+      );
+    }
+  }, [upcomingDate]);
+
+  const processedData = useMemo(() => {
+    if (
+      availables.length > 0 &&
+      userInfo.length > 0 &&
+      userSkills.length > 0 &&
+      skillNames.length > 0
+    ) {
+      return preprocessData(availables, userInfo, userSkills, skillNames);
+    }
+    return [];
+  }, [availables, userInfo, userSkills, skillNames]);
+
+  useEffect(() => {
+    setProcessed(processedData);
+  }, [processedData]);
+
+  const [showRoster, setShowRoster] = useState(false);
+
+  return (
+    <div className="md:w-2/3 w-full m-auto">
+      <button onClick={() => setShowRoster(!showRoster)} className="mb-4">
+        {showRoster ? "Hide" : "Show"} Upcoming Roster
+      </button>
+      {showRoster ? (
+        loading ? (
+          <p>Loading...</p>
+        ) : (
+          <>
+            {upcomingDate &&
+              processed
+                .filter((data) => data.date === upcomingDate)
+                .map((data) => (
+                  <RosterCard
+                    key={data.date}
+                    date={data.date}
+                    skillNames={skillNames}
+                    availables={availables}
+                    userSkills={userSkills}
+                    userInfo={userInfo}
+                    roster={planned}
+                    user={user}
+                  />
+                ))}
+          </>
+        )
+      ) : (
+        <></>
+      )}
+    </div>
+  );
+};
