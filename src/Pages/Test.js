@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useMemo } from "react";
 import { supabase } from "../Config/supabase";
 import { AuthContext } from "../Context/AuthContext";
 
@@ -363,45 +363,40 @@ export const Test = (props) => {
   }, []);
 
   useEffect(() => {
-    console.log(selectedMonth);
     setLoading(true);
-    const fetchData = async () => {
-      const availData = await fetchAvailables(selectedMonth);
-      const userData = await fetchUserInfo();
-      const skillsData = await fetchUserSkills();
-      const skillNamesData = await fetchSkillNames();
-      const plannedData = await fetchPlanned(selectedMonth);
-
-      setAvailables(availData);
-      setUserInfo(userData);
-      setUserSkills(skillsData);
-      setSkillNames(skillNamesData);
-      setPlanned(plannedData);
-
-      setLoading(false);
-    };
-
-    fetchData();
-    // if user is true, then set id = user.id
+    Promise.all([
+      fetchAvailables(selectedMonth),
+      fetchUserInfo(),
+      fetchUserSkills(),
+      fetchSkillNames(),
+      fetchPlanned(selectedMonth),
+    ]).then(
+      ([availData, userData, skillsData, skillNamesData, plannedData]) => {
+        setAvailables(availData);
+        setUserInfo(userData);
+        setUserSkills(skillsData);
+        setSkillNames(skillNamesData);
+        setPlanned(plannedData);
+        setLoading(false);
+      }
+    );
   }, [selectedMonth]);
 
-  useEffect(() => {
+  const processedData = useMemo(() => {
     if (
       availables.length > 0 &&
       userInfo.length > 0 &&
       userSkills.length > 0 &&
       skillNames.length > 0
     ) {
-      console.log("all data is here");
-      const processedData = preprocessData(
-        availables,
-        userInfo,
-        userSkills,
-        skillNames
-      );
-      setProcessed(processedData);
+      return preprocessData(availables, userInfo, userSkills, skillNames);
     }
-  }, [availables, userInfo, userSkills, skillNames, planned]);
+    return [];
+  }, [availables, userInfo, userSkills, skillNames]);
+
+  useEffect(() => {
+    setProcessed(processedData);
+  }, [processedData]);
 
   return (
     <div className="md:w-2/3 w-full m-auto ">
