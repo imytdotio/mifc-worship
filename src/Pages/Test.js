@@ -223,28 +223,29 @@ const RosterCard = (props) => {
       setSubmitMessage("Login to submit.");
       return;
     }
-  
-    const isAdmin = userSkills.some(skill => skill.uid === user.id && skill.skill === 0);
-  
+
+    const isAdmin = userSkills.some(
+      (skill) => skill.uid === user.id && skill.skill === 0
+    );
+
     if (!isAdmin) {
       setSubmitMessage("You are not an admin.");
       return;
     }
-  
+
     // If we reached this point, the user is an admin
     setSubmitMessage("Submitting...");
-  
+
     // Determine rows to delete and insert
     const toDelete = rowsToBeDeleted(planned, list);
     const toInsert = rowsToBeInserted(planned, list);
-  
+
     // Delete and Insert operations
     await deleteRows(toDelete);
     await insertRows(toInsert);
-  
+
     setSubmitMessage("Submitted.");
   };
-  
 
   return (
     <div className="bg-white rounded-md shadow-md py-4 px-8 md:w-1/2 w-full m-auto mb-4">
@@ -288,7 +289,9 @@ const RosterCard = (props) => {
 
       <button
         className="bg-gray-200 px-2 py-1 rounded-md hover:shadow-md my-2"
-        onClick={() => {handleButtonClick(roster, list)}}
+        onClick={() => {
+          handleButtonClick(roster, list);
+        }}
       >
         Submit
       </button>
@@ -450,18 +453,20 @@ export const Test = (props) => {
           </div>
 
           {selectedMonth &&
-            processed.map((data) => (
-              <RosterCard
-                key={data.date}
-                date={data.date}
-                skillNames={skillNames}
-                availables={availables}
-                userSkills={userSkills}
-                userInfo={userInfo}
-                roster={planned}
-                user={user}
-              />
-            ))}
+            processed
+              .filter((data) => new Date(data.date) >= new Date())
+              .map((data) => (
+                <RosterCard
+                  key={data.date}
+                  date={data.date}
+                  skillNames={skillNames}
+                  availables={availables}
+                  userSkills={userSkills}
+                  userInfo={userInfo}
+                  roster={planned}
+                  user={user}
+                />
+              ))}
         </>
       )}
     </div>

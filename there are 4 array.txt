@@ -1,0 +1,13 @@
+there are 4 array
+availables: [{date: "2023-08-19", note: ""​​, uid: "548556bf-841b-4e23-9830-ddbd33b39420"}, 
+{date: "2023-08-12", note: "", uid: "e73985d0-b5ed-4f6d-9bd1-5d5cfd6a408d"}]
+userInfo: [{uid: "548556bf-841b-4e23-9830-ddbd33b39420", nickname: "Boris"}]
+userSkills: [{skill: 1, uid: "efbbff7c-7938-4b45-9c25-69017498816a"}, {skill: 17, uid: "4e74e07f-d36f-4eb4-9654-802989c0d26e"}]
+I now want to render them out in a format like this in react:
+Date: 2023-08-12
+skill1: people who are available & have the skill
+skill2: people who are available & have the skill
+
+Date: 2023-08-19
+skill1: people who are available & have the skill
+skill2: people who are available & have the skill

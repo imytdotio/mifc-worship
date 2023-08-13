@@ -110,23 +110,29 @@ export const Availability = (props) => {
   }, []);
 
   const rowExists = (date) => {
-    return dates.some(d => new Date(d.date).toDateString() === new Date(date).toDateString() && d.available);
+    return dates.some(
+      (d) =>
+        new Date(d.date).toDateString() === new Date(date).toDateString() &&
+        d.available
+    );
   };
 
   const insertRow = async (uid, date, note = "") => {
     const { data, error } = await supabase
       .from("availability")
       .insert([{ uid, date, note }]);
-    
+
     if (error) {
       console.log(error);
       return;
     }
 
     // Update local state if needed
-    setDates(prevDates => {
+    setDates((prevDates) => {
       const updatedDates = [...prevDates];
-      const index = updatedDates.findIndex(d => new Date(d.date).toDateString() === new Date(date).toDateString());
+      const index = updatedDates.findIndex(
+        (d) => new Date(d.date).toDateString() === new Date(date).toDateString()
+      );
       if (index !== -1) {
         updatedDates[index].available = true;
         updatedDates[index].note = note;
@@ -134,7 +140,6 @@ export const Availability = (props) => {
       return updatedDates;
     });
   };
-
 
   const removeRow = async (uid, date) => {
     const { data, error } = await supabase
@@ -149,9 +154,11 @@ export const Availability = (props) => {
     }
 
     // Update local state if needed
-    setDates(prevDates => {
+    setDates((prevDates) => {
       const updatedDates = [...prevDates];
-      const index = updatedDates.findIndex(d => new Date(d.date).toDateString() === new Date(date).toDateString());
+      const index = updatedDates.findIndex(
+        (d) => new Date(d.date).toDateString() === new Date(date).toDateString()
+      );
       if (index !== -1) {
         updatedDates[index].available = false;
       }
@@ -182,9 +189,12 @@ export const Availability = (props) => {
       }
 
       // Update local state if needed
-      setDates(prevDates => {
+      setDates((prevDates) => {
         const updatedDates = [...prevDates];
-        const index = updatedDates.findIndex(d => new Date(d.date).toDateString() === new Date(date).toDateString());
+        const index = updatedDates.findIndex(
+          (d) =>
+            new Date(d.date).toDateString() === new Date(date).toDateString()
+        );
         if (index !== -1) {
           updatedDates[index].note = note;
         }
@@ -202,20 +212,22 @@ export const Availability = (props) => {
       {/* <h1>{user && user.id}</h1> */}
       <div className="flex flex-col m-auto justify-center p-4 gap-4">
         {dates &&
-          dates.map((date) => {
-            return (
-              <Datey
-                date={date.date}
-                key={date.id}
-                isChecked={date.available}
-                note={date.note}
-                setCheck={() => {
-                  setCheck(user.id, date.date, date.available);
-                }}
-                setNote={(tempStr) => setNote(user.id, date.date, tempStr)}
-              />
-            );
-          })}
+          dates
+            .filter((data) => new Date(data.date) >= new Date())
+            .map((date) => {
+              return (
+                <Datey
+                  date={date.date}
+                  key={date.id}
+                  isChecked={date.available}
+                  note={date.note}
+                  setCheck={() => {
+                    setCheck(user.id, date.date, date.available);
+                  }}
+                  setNote={(tempStr) => setNote(user.id, date.date, tempStr)}
+                />
+              );
+            })}
       </div>
     </div>
   );
