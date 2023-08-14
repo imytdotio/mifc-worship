@@ -141,7 +141,16 @@ const NameButton = (props) => {
 };
 
 const RosterCard = (props) => {
-  const { availables, userInfo, userSkills, skillNames, planned, user } = props;
+  const {
+    availables,
+    userInfo,
+    userSkills,
+    skillNames,
+    planned,
+    user,
+    visibility,
+    setVisibility,
+  } = props;
   const [submitMessage, setSubmitMessage] = useState("");
 
   const [list, setList] = useState(
@@ -223,18 +232,8 @@ const RosterCard = (props) => {
     }
   };
 
-  const submitList = async (planned, list) => {
-    // Determine rows to delete and insert
-    const toDelete = rowsToBeDeleted(planned, list);
-    const toInsert = rowsToBeInserted(planned, list);
-
-    // Delete and Insert operations
-    await deleteRows(toDelete);
-    await insertRows(toInsert);
-  };
-
   // Function to handle the submit click
-  const handleButtonClick = async (planned, list) => {
+  const handleSubmit = async (planned, list) => {
     if (!user) {
       setSubmitMessage("Login to submit.");
       return;
@@ -263,11 +262,57 @@ const RosterCard = (props) => {
     setSubmitMessage("Submitted.");
   };
 
+  const handleVisibility = async (date) => {
+    const { data, error } = await supabase
+      .from("visibility")
+      .select()
+      .eq("date", date);
+
+    if (error) {
+      console.log(error);
+      return;
+    }
+
+    if (data.length === 0) {
+      // insert
+      const { error } = await supabase
+        .from("visibility")
+        .insert([{ date: date }]);
+
+      if (error) {
+        console.log(error);
+        return;
+      }
+      // Update the visibility state directly
+      setVisibility((prevVisibility) => [...prevVisibility, date]);
+    } else {
+      // delete
+      const { error } = await supabase
+        .from("visibility")
+        .delete()
+        .eq("date", date);
+
+      if (error) {
+        console.log(error);
+        return;
+      }
+      // Update the visibility state directly
+      setVisibility((prevVisibility) =>
+        prevVisibility.filter((d) => d !== date)
+      );
+    }
+  };
+
   return (
     <div className="bg-white rounded-md shadow-md py-4 px-8 md:w-1/2 w-full m-auto mb-4">
       <div className="flex">
         <p className="font-bold flex-1">{props.date}</p>
         <button onClick={() => setShowList(!showList)}>👁️</button>
+        {visibility.some((date) => date == props.date) ? (
+          <button onClick={() => handleVisibility(props.date)}>🐵</button>
+        ) : (
+          <button onClick={() => handleVisibility(props.date)}>🙈</button>
+        )}
       </div>
       {skillNames
         .filter((skillName) => skillName.id !== 0)
@@ -306,7 +351,7 @@ const RosterCard = (props) => {
       <button
         className="bg-gray-200 px-2 py-1 rounded-md hover:shadow-md my-2"
         onClick={() => {
-          handleButtonClick(planned, list);
+          handleSubmit(planned, list);
         }}
       >
         Submit
@@ -492,6 +537,8 @@ export const Test = (props) => {
                   userInfo={userInfo}
                   planned={planned}
                   user={user}
+                  visibility={visibility}
+                  setVisibility={setVisibility}
                 />
               ))}
         </>
@@ -511,6 +558,7 @@ export const UpcomingRoster = (props) => {
   const [planned, setPlanned] = useState([]);
   const [processed, setProcessed] = useState([]);
   const [upcomingDate, setUpcomingDate] = useState(null);
+  const [visibility, setVisibility] = useState([]);
 
   useEffect(() => {
     const findUpcomingSaturday = (dates) => {
@@ -541,14 +589,23 @@ export const UpcomingRoster = (props) => {
         fetchUserSkills(),
         fetchSkillNames(),
         fetchPlanned(selectedMonth),
+        fetchVisibility(selectedMonth),
       ]).then(
-        ([availData, userData, skillsData, skillNamesData, plannedData]) => {
+        ([
+          availData,
+          userData,
+          skillsData,
+          skillNamesData,
+          plannedData,
+          visibleWeeks,
+        ]) => {
           setAvailables(availData);
           setUserInfo(userData);
           setUserSkills(skillsData);
           setSkillNames(skillNamesData);
           setPlanned(plannedData);
           setLoading(false);
+          setVisibility(visibleWeeks);
         }
       );
     }
@@ -589,6 +646,8 @@ export const UpcomingRoster = (props) => {
                   userInfo={userInfo}
                   planned={planned}
                   user={user}
+                  visibility={visibility}
+                  setVisibility={setVisibility}
                 />
               ))}
         </>
