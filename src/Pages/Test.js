@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState, useMemo } from "react";
 import { supabase } from "../Config/supabase";
 import { AuthContext } from "../Context/AuthContext";
+import { RosterCard } from "../Componenets/RosterCard";
 
 const fetchAvailables = async (selectedMonth) => {
   const { data, error } = await supabase
@@ -87,262 +88,20 @@ const fetchPlanned = async (selectedMonth) => {
   }
 };
 
-const NameButton = (props) => {
-  const { uid, date, skill, nickname, list, setList } = props;
+const fetchVisibility = async (selectedMonth) => {
+  const { data, error } = await supabase
+    .from("visibility")
+    .select()
+    .like("date", `%-${selectedMonth}-%`);
 
-  // Check if the current combination exists in the list
-  const isActive = list.some(
-    (item) => item.uid === uid && item.date === date && item.skill === skill
-  );
-
-  return (
-    <span
-      className={`cursor-pointer mx-1 px-1 ${
-        isActive ? "bg-teal-400" : "bg-gray-200"
-      } rounded-md`}
-      onClick={() => {
-        console.log(uid, date, skill);
-        // Toggle the combination in the list state
-        if (isActive) {
-          setList((prevList) =>
-            prevList.filter(
-              (item) =>
-                !(
-                  item.uid === uid &&
-                  item.date === date &&
-                  item.skill === skill
-                )
-            )
-          );
-        } else {
-          setList((prevList) => [...prevList, { uid, date, skill }]);
-        }
-      }}
-    >
-      {nickname}
-    </span>
-  );
-};
-
-const RosterCard = (props) => {
-  const {
-    availables,
-    userInfo,
-    userSkills,
-    skillNames,
-    planned,
-    user,
-    visibility,
-    setVisibility,
-  } = props;
-  const [submitMessage, setSubmitMessage] = useState("");
-
-  const [list, setList] = useState(
-    roster.filter((item) => item.date === props.date)
-  );
-  const [showList, setShowList] = useState(false);
-
-  // Find users available on the given date
-  const usersAvailableOnDate = (date) => {
-    return availables
-      .filter((available) => available.date === date)
-      .map((av) => av.uid);
-  };
-
-  // Find the nickname of a user given their uid
-  const findUserNickname = (uid) => {
-    const user = userInfo.find((user) => user.uid === uid);
-    return user ? user.nickname : null;
-  };
-
-  // Find users with a specific skill
-  const usersWithSkill = (skillId) => {
-    return userSkills
-      .filter((skill) => skill.skill === skillId)
-      .map((sk) => sk.uid);
-  };
-
-  // Find users available on a date with a specific skill
-  const usersAvailableWithSkill = (date, skillId) => {
-    const availableUids = usersAvailableOnDate(date);
-    const skillUids = usersWithSkill(skillId);
-
-    // Find intersection of both arrays
-    const commonUids = availableUids.filter((uid) => skillUids.includes(uid));
-
-    if (showList) {
-      // Filter by users in the list for the given date and skill
-      return commonUids
-        .filter((uid) =>
-          list.some(
-            (item) =>
-              item.uid === uid && item.date === date && item.skill === skillId
-          )
-        )
-        .map((uid) => findUserNickname(uid))
-        .filter(Boolean);
-    }
-
-    return commonUids.map((uid) => findUserNickname(uid)).filter(Boolean);
-  };
-
-  const deleteRows = async (rows) => {
-    const { error } = await supabase
-      .from("roster")
-      .delete()
-      .in(
-        "uid",
-        rows.map((row) => row.uid)
-      )
-      .in(
-        "date",
-        rows.map((row) => row.date)
-      )
-      .in(
-        "skill",
-        rows.map((row) => row.skill)
-      );
-
-    if (error) {
-      console.error("Error deleting rows:", error);
-    }
-  };
-
-  const insertRows = async (rows) => {
-    const { error } = await supabase.from("roster").insert(rows);
-
-    if (error) {
-      console.error("Error inserting rows:", error);
-    }
-  };
-
-  // Function to handle the submit click
-  const handleSubmit = async (planned, list) => {
-    if (!user) {
-      setSubmitMessage("Login to submit.");
-      return;
-    }
-
-    const isAdmin = userSkills.some(
-      (skill) => skill.uid === user.id && skill.skill === 0
-    );
-
-    if (!isAdmin) {
-      setSubmitMessage("You are not an admin.");
-      return;
-    }
-
-    // If we reached this point, the user is an admin
-    setSubmitMessage("Submitting...");
-
-    // Determine rows to delete and insert
-    const toDelete = rowsToBeDeleted(planned, list);
-    const toInsert = rowsToBeInserted(planned, list);
-
-    // Delete and Insert operations
-    await deleteRows(toDelete);
-    await insertRows(toInsert);
-
-    setSubmitMessage("Submitted.");
-  };
-
-  const handleVisibility = async (date) => {
-    const { data, error } = await supabase
-      .from("visibility")
-      .select()
-      .eq("date", date);
-
-    if (error) {
-      console.log(error);
-      return;
-    }
-
-    if (data.length === 0) {
-      // insert
-      const { error } = await supabase
-        .from("visibility")
-        .insert([{ date: date }]);
-
-      if (error) {
-        console.log(error);
-        return;
-      }
-      // Update the visibility state directly
-      setVisibility((prevVisibility) => [...prevVisibility, date]);
-    } else {
-      // delete
-      const { error } = await supabase
-        .from("visibility")
-        .delete()
-        .eq("date", date);
-
-      if (error) {
-        console.log(error);
-        return;
-      }
-      // Update the visibility state directly
-      setVisibility((prevVisibility) =>
-        prevVisibility.filter((d) => d !== date)
-      );
-    }
-  };
-
-  return (
-    <div className="bg-white rounded-md shadow-md py-4 px-8 md:w-1/2 w-full m-auto mb-4">
-      <div className="flex">
-        <p className="font-bold flex-1">{props.date}</p>
-        <button onClick={() => setShowList(!showList)}>👁️</button>
-        {visibility.some((date) => date == props.date) ? (
-          <button onClick={() => handleVisibility(props.date)}>🐵</button>
-        ) : (
-          <button onClick={() => handleVisibility(props.date)}>🙈</button>
-        )}
-      </div>
-      {skillNames
-        .filter((skillName) => skillName.id !== 0)
-        .sort((a, b) => a.skill_order - b.skill_order)
-        .map((skillName) => {
-          const usersForSkill = usersAvailableWithSkill(
-            props.date,
-            skillName.id
-          );
-
-          return (
-            <div key={skillName.id}>
-              <p className="text-left">
-                {skillName.name}:
-                {usersForSkill.map((nickname, idx) => {
-                  const uid = userInfo.find(
-                    (user) => user.nickname === nickname
-                  )?.uid;
-                  return (
-                    <NameButton
-                      uid={uid}
-                      date={props.date}
-                      skill={skillName.id}
-                      nickname={nickname}
-                      list={list}
-                      setList={setList}
-                      key={uid}
-                    />
-                  );
-                })}
-              </p>
-            </div>
-          );
-        })}
-
-      <button
-        className="bg-gray-200 px-2 py-1 rounded-md hover:shadow-md my-2"
-        onClick={() => {
-          handleButtonClick(planned, list);
-        }}
-      >
-        Submit
-      </button>
-      {submitMessage && <p>{submitMessage}</p>}
-    </div>
-  );
+  if (error) {
+    console.log(error);
+    return;
+  }
+  if (data) {
+    console.log("v", data);
+    return data;
+  }
 };
 
 const preprocessData = (availables, userInfo, userSkills, skillNames) => {
@@ -382,23 +141,6 @@ const preprocessData = (availables, userInfo, userSkills, skillNames) => {
   return processedData;
 };
 
-const rowsToBeDeleted = (planned, list) => {
-  return planned.filter(
-    (p) =>
-      !list.some(
-        (l) => l.uid === p.uid && l.date === p.date && l.skill === p.skill
-      )
-  );
-};
-
-const rowsToBeInserted = (planned, list) => {
-  return list.filter(
-    (l) =>
-      !planned.some(
-        (p) => p.uid === l.uid && p.date === l.date && p.skill === l.skill
-      )
-  );
-};
 
 export const Test = (props) => {
   const { user } = useContext(AuthContext);
@@ -412,6 +154,7 @@ export const Test = (props) => {
   const [skillNames, setSkillNames] = useState([]);
   const [planned, setPlanned] = useState([]);
   const [processed, setProcessed] = useState([]);
+  const [visibility, setVisibility] = useState([]);
 
   useEffect(() => {
     function handleFetchedDates(data) {
@@ -445,16 +188,26 @@ export const Test = (props) => {
       fetchUserSkills(),
       fetchSkillNames(),
       fetchPlanned(selectedMonth),
+      fetchVisibility(selectedMonth),
     ]).then(
-      ([availData, userData, skillsData, skillNamesData, plannedData]) => {
+      ([
+        availData,
+        userData,
+        skillsData,
+        skillNamesData,
+        plannedData,
+        visibleWeeks,
+      ]) => {
         setAvailables(availData);
         setUserInfo(userData);
         setUserSkills(skillsData);
         setSkillNames(skillNamesData);
         setPlanned(plannedData);
         setLoading(false);
+        setVisibility(visibleWeeks);
       }
     );
+    console.log("vv", visibility);
   }, [selectedMonth]);
 
   const processedData = useMemo(() => {
@@ -481,20 +234,25 @@ export const Test = (props) => {
         <>
           <div className="mb-2">
             <p className="font-bold">Select Month:</p>
-            {months.map((month) => (
-              <button
-                className="px-1 mx-1 bg-gray-200 rounded-md"
-                onClick={() => {
-                  if (month + 1 < 10) {
-                    setSelectedMonth(`0${month + 1}`);
-                  } else {
-                    setSelectedMonth(month + 1);
-                  }
-                }}
-              >
-                {month + 1}
-              </button>
-            ))}
+            {months.map((month) => {
+              const monthValue = month + 1;
+              const formattedMonth =
+                monthValue < 10 ? `0${monthValue}` : `${monthValue}`;
+              return (
+                <button
+                  className={`px-1 mx-1 rounded-md border-2 ${
+                    selectedMonth === formattedMonth
+                      ? "border-teal-400 bg-teal-400/20"
+                      : "hover:border-gray-400 bg-gray-200"
+                  } duration-200`}
+                  onClick={() => {
+                    setSelectedMonth(formattedMonth);
+                  }}
+                >
+                  {monthValue}
+                </button>
+              );
+            })}
           </div>
 
           {selectedMonth &&
@@ -508,7 +266,7 @@ export const Test = (props) => {
                   availables={availables}
                   userSkills={userSkills}
                   userInfo={userInfo}
-                  roster={planned}
+                  planned={planned}
                   user={user}
                   visibility={visibility}
                   setVisibility={setVisibility}
@@ -519,7 +277,6 @@ export const Test = (props) => {
     </div>
   );
 };
-
 
 export const UpcomingRoster = (props) => {
   const { user } = useContext(AuthContext);
@@ -618,7 +375,7 @@ export const UpcomingRoster = (props) => {
                   availables={availables}
                   userSkills={userSkills}
                   userInfo={userInfo}
-                  roster={planned}
+                  planned={planned}
                   user={user}
                   visibility={visibility}
                   setVisibility={setVisibility}
