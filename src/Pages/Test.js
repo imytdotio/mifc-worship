@@ -359,7 +359,7 @@ export const UpcomingRoster = (props) => {
   }, [processedData]);
 
   return (
-    <div className="md:w-2/3 w-full m-auto">
+    <div className="w-full m-auto">
       {loading ? (
         <p>Loading...</p>
       ) : (
