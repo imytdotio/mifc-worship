@@ -40,7 +40,6 @@ export const Home = (props) => {
   }
   return (
     <div className="bg-white rounded-3xl shadow-lg md:w-2/3 w-full m-auto p-8">
-      <UpcomingRoster />
       {!user ? (
         <Linktree
           link="/login"
@@ -50,7 +49,7 @@ export const Home = (props) => {
       ) : (
         <>{/* <Notification /> */}</>
       )}
-      <div className="grid grid-cols-2 gap-4 w-full md:w-1/2 lg:w-1/2 mx-auto">
+      <div className="grid grid-cols-2 gap-4 w-full md:w-1/2 lg:w-1/2 mx-auto my-4">
         {user ? (
           <>
             <Linktree link="/account" title="🥷 Account" />
@@ -72,7 +71,7 @@ export const Home = (props) => {
         <Linktree link="/roster" title="🙋‍♂️ Roster" />
         <Linktree link="/desc" title="✍️ Description" />
       </div>
-
+      <UpcomingRoster />
       {/* <Login /> */}
     </div>
   );
