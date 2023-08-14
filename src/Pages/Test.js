@@ -98,9 +98,7 @@ const NameButton = (props) => {
   return (
     <span
       className={`cursor-pointer mx-1 px-1 ${
-        isActive
-          ? "bg-teal-400/20 border-2 border-teal-400"
-          : "bg-gray-200 border-2 border-transparent"
+        isActive ? "bg-teal-400" : "bg-gray-200"
       } rounded-md`}
       onClick={() => {
         console.log(uid, date, skill);
@@ -290,7 +288,7 @@ const RosterCard = (props) => {
   };
 
   return (
-    <div className="bg-white rounded-md border border-gray-200 py-4 px-8 md:w-1/2 w-full m-auto mb-4">
+    <div className="bg-white rounded-md shadow-md py-4 px-8 md:w-1/2 w-full m-auto mb-4">
       <div className="flex">
         <p className="font-bold flex-1">{props.date}</p>
         <button onClick={() => setShowList(!showList)}>👁️</button>
@@ -311,7 +309,7 @@ const RosterCard = (props) => {
 
           return (
             <div key={skillName.id}>
-              <p className="text-left my-1">
+              <p className="text-left">
                 {skillName.name}:
                 {usersForSkill.map((nickname, idx) => {
                   const uid = userInfo.find(
@@ -335,7 +333,7 @@ const RosterCard = (props) => {
         })}
 
       <button
-        className="hvoer:bg-gray-200 px-2 py-1 rounded-md hover:border-gray-400 border-2 my-2 duration-200"
+        className="bg-gray-200 px-2 py-1 rounded-md hover:shadow-md my-2"
         onClick={() => {
           handleButtonClick(planned, list);
         }}
