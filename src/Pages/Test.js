@@ -87,22 +87,6 @@ const fetchPlanned = async (selectedMonth) => {
   }
 };
 
-const fetchVisibility = async (selectedMonth) => {
-  const { data, error } = await supabase
-    .from("visibility")
-    .select()
-    .like("date", `%-${selectedMonth}-%`);
-
-  if (error) {
-    console.log(error);
-    return;
-  }
-  if (data) {
-    console.log("v", data);
-    return data;
-  }
-};
-
 const NameButton = (props) => {
   const { uid, date, skill, nickname, list, setList } = props;
 
@@ -156,7 +140,7 @@ const RosterCard = (props) => {
   const [submitMessage, setSubmitMessage] = useState("");
 
   const [list, setList] = useState(
-    planned.filter((item) => item.date === props.date)
+    roster.filter((item) => item.date === props.date)
   );
   const [showList, setShowList] = useState(false);
 
@@ -353,7 +337,7 @@ const RosterCard = (props) => {
       <button
         className="hvoer:bg-gray-200 px-2 py-1 rounded-md hover:border-gray-400 border-2 my-2 duration-200"
         onClick={() => {
-          handleSubmit(planned, list);
+          handleButtonClick(planned, list);
         }}
       >
         Submit
@@ -430,7 +414,6 @@ export const Test = (props) => {
   const [skillNames, setSkillNames] = useState([]);
   const [planned, setPlanned] = useState([]);
   const [processed, setProcessed] = useState([]);
-  const [visibility, setVisibility] = useState([]);
 
   useEffect(() => {
     function handleFetchedDates(data) {
@@ -464,26 +447,16 @@ export const Test = (props) => {
       fetchUserSkills(),
       fetchSkillNames(),
       fetchPlanned(selectedMonth),
-      fetchVisibility(selectedMonth),
     ]).then(
-      ([
-        availData,
-        userData,
-        skillsData,
-        skillNamesData,
-        plannedData,
-        visibleWeeks,
-      ]) => {
+      ([availData, userData, skillsData, skillNamesData, plannedData]) => {
         setAvailables(availData);
         setUserInfo(userData);
         setUserSkills(skillsData);
         setSkillNames(skillNamesData);
         setPlanned(plannedData);
         setLoading(false);
-        setVisibility(visibleWeeks);
       }
     );
-    console.log("vv", visibility);
   }, [selectedMonth]);
 
   const processedData = useMemo(() => {
@@ -537,7 +510,7 @@ export const Test = (props) => {
                   availables={availables}
                   userSkills={userSkills}
                   userInfo={userInfo}
-                  planned={planned}
+                  roster={planned}
                   user={user}
                   visibility={visibility}
                   setVisibility={setVisibility}
@@ -548,6 +521,7 @@ export const Test = (props) => {
     </div>
   );
 };
+
 
 export const UpcomingRoster = (props) => {
   const { user } = useContext(AuthContext);
@@ -646,7 +620,7 @@ export const UpcomingRoster = (props) => {
                   availables={availables}
                   userSkills={userSkills}
                   userInfo={userInfo}
-                  planned={planned}
+                  roster={planned}
                   user={user}
                   visibility={visibility}
                   setVisibility={setVisibility}
