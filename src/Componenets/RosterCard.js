@@ -4,18 +4,20 @@ import { useContext, useEffect, useMemo } from "react";
 import { supabase } from "../Config/supabase";
 import { AuthContext } from "../Context/AuthContext";
 
-const rowsToBeDeleted = (planned, list) => {
+const rowsToBeDeleted = (planned, list, date) => {
   return planned.filter(
     (p) =>
+      p.date === date &&
       !list.some(
         (l) => l.uid === p.uid && l.date === p.date && l.skill === p.skill
       )
   );
 };
 
-const rowsToBeInserted = (planned, list) => {
+const rowsToBeInserted = (planned, list, date) => {
   return list.filter(
     (l) =>
+      l.date === date &&
       !planned.some(
         (p) => p.uid === l.uid && p.date === l.date && p.skill === l.skill
       )
@@ -122,7 +124,7 @@ export const RosterCard = (props) => {
   }, [userSkills, user]);
 
   // Function to handle the submit click
-  const handleSubmit = async (planned, list) => {
+  const handleSubmit = async (planned, list, date) => {
     if (!user) {
       setSubmitMessage("Login to submit.");
       return;
@@ -137,14 +139,15 @@ export const RosterCard = (props) => {
     setSubmitMessage("Submitting...");
 
     // Determine rows to delete and insert
-    const toDelete = rowsToBeDeleted(planned, list);
-    const toInsert = rowsToBeInserted(planned, list);
+    const toDelete = rowsToBeDeleted(planned, list, date);
+    const toInsert = rowsToBeInserted(planned, list, date);
 
     // Delete and Insert operations
     await deleteRows(toDelete);
     await insertRows(toInsert);
 
     setSubmitMessage("Submitted.");
+    props.refetchPlannedData();
   };
 
   const handleVisibility = async (date) => {
@@ -238,7 +241,7 @@ export const RosterCard = (props) => {
         <button
           className="hover:bg-gray-200 px-2 py-1 rounded-md hover:border-gray-400 border-2 my-2 duration-200"
           onClick={() => {
-            handleSubmit(planned, list);
+            handleSubmit(planned, list, props.date);
           }}
         >
           Submit

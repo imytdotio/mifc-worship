@@ -14,7 +14,7 @@ const fetchAvailables = async (selectedMonth) => {
     return;
   }
   if (data) {
-    console.log(data);
+    // console.log(data);
     return data;
   }
 };
@@ -99,8 +99,7 @@ const fetchVisibility = async (selectedMonth) => {
     return;
   }
   if (data) {
-    console.log("v", data);
-    return data;
+    return data.map((obj) => obj.date);
   }
 };
 
@@ -141,7 +140,6 @@ const preprocessData = (availables, userInfo, userSkills, skillNames) => {
   return processedData;
 };
 
-
 export const Roster = (props) => {
   const { user } = useContext(AuthContext);
 
@@ -175,7 +173,7 @@ export const Roster = (props) => {
     }
 
     fetchSaturdays().then((data) => {
-      console.log(data);
+      // console.log(data);
       handleFetchedDates(data);
     });
   }, []);
@@ -207,7 +205,6 @@ export const Roster = (props) => {
         setVisibility(visibleWeeks);
       }
     );
-    console.log("vv", visibility);
   }, [selectedMonth]);
 
   const processedData = useMemo(() => {
@@ -225,6 +222,11 @@ export const Roster = (props) => {
   useEffect(() => {
     setProcessed(processedData);
   }, [processedData]);
+
+  const refetchPlannedData = async () => {
+    const updatedPlannedData = await fetchPlanned(selectedMonth);
+    setPlanned(updatedPlannedData);
+  };
 
   return (
     <div className="md:w-2/3 w-full m-auto ">
@@ -270,6 +272,7 @@ export const Roster = (props) => {
                   user={user}
                   visibility={visibility}
                   setVisibility={setVisibility}
+                  refetchPlannedData={refetchPlannedData}
                 />
               ))}
         </>
