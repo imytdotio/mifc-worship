@@ -1,5 +1,6 @@
 export const NameButton = (props) => {
-  const { uid, date, skill, nickname, list, setList } = props;
+  const { uid, date, skill, nickname, list, setList, visibility } = props;
+
 
   // Check if the current combination exists in the list
   const isActive = list.some(

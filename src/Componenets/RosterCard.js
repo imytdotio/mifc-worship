@@ -38,8 +38,11 @@ export const RosterCard = (props) => {
   const [submitMessage, setSubmitMessage] = useState("");
 
   const [list, setList] = useState(
-    planned.filter((item) => item.date === props.date)
+    visibility.includes(props.date)
+      ? planned.filter((item) => item.date === props.date)
+      : []
   );
+
   const [showList, setShowList] = useState(false);
 
   // Find users available on the given date
@@ -71,7 +74,6 @@ export const RosterCard = (props) => {
     const commonUids = availableUids.filter((uid) => skillUids.includes(uid));
 
     if (showList) {
-      // Filter by users in the list for the given date and skill
       return commonUids
         .filter((uid) =>
           list.some(
@@ -228,6 +230,7 @@ export const RosterCard = (props) => {
                       nickname={nickname}
                       list={list}
                       setList={setList}
+                      visibility={visibility}
                       key={uid}
                     />
                   );
