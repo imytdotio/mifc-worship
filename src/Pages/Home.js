@@ -39,7 +39,7 @@ export const Home = (props) => {
     console.log(user);
   }
   return (
-    <div className="bg-white rounded-3xl shadow-lg md:w-2/3 w-full m-auto p-8">
+    <div className="lg:bg-white rounded-3xl lg:shadow-lg md:w-2/3 w-full m-auto md:py-8 p-0">
       {!user ? (
         <Linktree
           link="/login"
