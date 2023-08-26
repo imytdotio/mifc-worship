@@ -52,6 +52,7 @@ export const EditUser = (props) => {
 
   useEffect(() => {
     const fetchInitData = async () => {
+      console.log("hello");
       const { data, error } = await supabase
         .from("members_info")
         .select()
@@ -62,6 +63,7 @@ export const EditUser = (props) => {
       }
       if (!data.length) {
         console.log("no user found");
+        console.log(user.id);
         const { data, error } = await supabase
           .from("members_info")
           .insert([{ uid: user.id }])
@@ -88,8 +90,8 @@ export const EditUser = (props) => {
       await fetchUserSkills(user.id);
     };
 
-    fetchData();
     fetchInitData();
+    fetchData();
   }, []);
 
   const [skills, setSkills] = useState();
