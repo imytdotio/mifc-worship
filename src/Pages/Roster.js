@@ -259,7 +259,11 @@ export const Roster = (props) => {
 
           {selectedMonth &&
             processed
-              .filter((data) => new Date(data.date) >= new Date())
+              .filter((data) => {
+                const currentDate = new Date();
+                currentDate.setHours(0, 0, 0, 0); // set to start of day
+                return new Date(data.date) >= currentDate;
+              })
               .map((data) => (
                 <RosterCard
                   key={data.date}
@@ -298,7 +302,7 @@ export const UpcomingRoster = (props) => {
     const findUpcomingSaturday = (dates) => {
       const now = new Date();
       for (let date of dates) {
-        if (new Date(date) > now) {
+        if (new Date(date) >= now) {
           return date;
         }
       }
